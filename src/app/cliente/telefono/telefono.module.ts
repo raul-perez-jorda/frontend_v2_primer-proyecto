@@ -6,7 +6,6 @@ import { InputTextModule } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
 import { CheckboxModule } from 'primeng/checkbox';
 import { RadioButtonModule } from 'primeng/radiobutton';
-import { ChartModule } from 'primeng/chart';
 
 import { TelefonoComponent } from './telefono.component';
 
@@ -22,7 +21,7 @@ import { TelefonoComponent } from './telefono.component';
     ReactiveFormsModule,
     FormsModule,
     ButtonModule,
-    ChartModule
+
   ],
   exports: [
     

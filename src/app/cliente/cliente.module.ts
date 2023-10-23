@@ -7,6 +7,7 @@ import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
 import { DialogModule } from 'primeng/dialog';
 import { InputTextModule } from 'primeng/inputtext';
+import { ChartModule } from 'primeng/chart';
 
 import { ClienteComponent } from './cliente.component';
 import { TelefonoComponent } from './telefono/telefono.component';
@@ -28,7 +29,7 @@ import { TelefonoModule } from './telefono/telefono.module';
     BrowserAnimationsModule,
     InputTextModule,
     AddEditClienteModule,
-    
+    ChartModule
   ],
   exports: [
     ClienteComponent,
