@@ -1,0 +1,47 @@
+<div class="card">
+    <p-table [value]="telefonos" [tableStyle]="{ 'width': '100%' }">
+        <ng-template pTemplate="header">
+            <tr>
+                <th>Teléfono</th>
+                <th>Función</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-telefono>
+            <tr style="text-align: center;">
+                <td>{{ telefono.telefono }}</td>
+                <td>{{ telefono.descripc_tel }}</td>
+            </tr>
+        </ng-template>
+    </p-table>
+    
+    <h4>Nuevo teléfono:</h4>
+
+    <form>
+        <div class="p-inputgroup" for="telefono">
+            <span class="p-inputgroup-addon">
+                <i class="pi pi-phone"></i>
+            </span>
+            <input type="text" pInputText id="telefono" formControlName="telefono" placeholder="Número teléfono" />
+            <small 
+                class="p-error block"
+                *ngIf="
+                    telefonoForm.controls['telefono'].invalid && 
+                    telefonoForm.controls['telefono'].dirty
+                "
+                >Este campo es obligatorio</small>
+        </div>
+        <div class="p-inputgroup" for="descripc_tel">
+            <span class="p-inputgroup-addon">
+                <i class="pi pi-info-circle"></i>
+            </span>
+            <input type="text" pInputText id="descripc_tel" formControlName="descripc_tel" placeholder="Descripción (p.ej. móvil, profesional)" />
+        </div>
+    </form>
+
+    <p-button 
+        icon="pi pi-plus" [text]="true" [rounded]="true" 
+        (click)= "addTelefono()"     
+        [disabled]="telefonoForm.invalid" 
+    ></p-button>
+
+</div>
