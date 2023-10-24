@@ -79,6 +79,9 @@ export class TelefonoComponent implements OnInit {
         console.error(errorTelefono);
       }
     )
+
+    this.telefonoForm.reset();
+    location.reload();
   }
 
   getConsumosTelefono(id_tel:number, id_cli:number) {
@@ -125,11 +128,30 @@ export class TelefonoComponent implements OnInit {
             maintainAspectRatio: false,
             aspectRatio: 0.6,
             plugins: {
+              plugins: {
+                title: {
+                  display: true,
+                  text: 'Consumos',
+                  align: 'center',
+                  font: {
+                    size: 16,
+                    weight: 'bold'
+                  },
+                  padding: {
+                    top: 10,
+                  }
+                },
                 legend: {
-                    labels: {
-                        color: textColor
-                    }
-                }
+                  display: false, // Establece display en false para ocultar el legend
+                },
+              },
+              tooltips: {
+                callbacks: {
+                  label: function (tooltipItem:any) {
+                    return tooltipItem.yLabel;
+                  },
+                },
+              }
             },
             scales: {
                 x: {
@@ -150,8 +172,8 @@ export class TelefonoComponent implements OnInit {
                         drawBorder: false
                     }
                 }
-            }
-        };
+            },
+        }
 
 
         // Mostrar grafica de media, consumo máximo y mínimo
