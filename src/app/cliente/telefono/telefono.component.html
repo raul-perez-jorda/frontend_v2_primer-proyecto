@@ -1,15 +1,20 @@
 <div class="card">
-    <p-table [value]="telefonos" [tableStyle]="{ 'width': '100%' }">
+    <p-table [value]="telefonos" [tableStyle]="{ 'width': '100%' }" 
+        selectionMode="single">
         <ng-template pTemplate="header">
             <tr>
                 <th>Teléfono</th>
                 <th>Función</th>
+                <th>Consumo</th>
             </tr>
         </ng-template>
         <ng-template pTemplate="body" let-telefono>
             <tr style="text-align: center;">
                 <td>{{ telefono.telefono }}</td>
                 <td>{{ telefono.descripc_tel }}</td>
+                <td><p-button label="Ver consumo" severity="warning" size="small" 
+                    (click)="getConsumosTelefono(telefono.id_tel, telefono.id_cli)"
+                ></p-button></td>
             </tr>
         </ng-template>
     </p-table>
@@ -39,14 +44,17 @@
     </form>
 
     <p-button 
-        icon="pi pi-plus" [text]="true" [rounded]="true" 
         (click)= "addTelefono()"     
+        icon="pi pi-plus" [text]="true" [rounded]="true" 
         [disabled]="telefonoForm.invalid" 
     ></p-button>
 
-    <div class="card">
+    <div class="card" [hidden]="ocultarGrafica">
         <p-chart type="line" [data]="data" [options]="options"></p-chart>
     </div>
     
+    <div class="card" [hidden]="ocultarGrafica">
+        <p-chart type="bar" [data]="basicData" [options]="basicOptions"></p-chart>
+    </div>
 
 </div>

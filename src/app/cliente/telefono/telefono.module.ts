@@ -6,12 +6,14 @@ import { InputTextModule } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
 import { CheckboxModule } from 'primeng/checkbox';
 import { RadioButtonModule } from 'primeng/radiobutton';
+import { TableModule } from 'primeng/table';
+import { ChartModule } from 'primeng/chart';
 
 import { TelefonoComponent } from './telefono.component';
 
 @NgModule({
   declarations: [
-    
+    TelefonoComponent
   ],
   imports: [
     CommonModule,
@@ -21,10 +23,11 @@ import { TelefonoComponent } from './telefono.component';
     ReactiveFormsModule,
     FormsModule,
     ButtonModule,
-
+    TableModule,
+    ChartModule
   ],
   exports: [
-    
+    TelefonoComponent
   ]
 })
 export class TelefonoModule { }

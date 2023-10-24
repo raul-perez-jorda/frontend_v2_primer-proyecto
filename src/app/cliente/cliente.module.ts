@@ -10,15 +10,12 @@ import { InputTextModule } from 'primeng/inputtext';
 import { ChartModule } from 'primeng/chart';
 
 import { ClienteComponent } from './cliente.component';
-import { TelefonoComponent } from './telefono/telefono.component';
-import { AddEditClienteComponent } from './add-edit-cliente/add-edit-cliente.component';
 import { AddEditClienteModule } from './add-edit-cliente/add-edit-cliente.module';
 import { TelefonoModule } from './telefono/telefono.module';
 
 @NgModule({
   declarations: [
     ClienteComponent,
-    TelefonoComponent,
   ],
   imports: [
     CommonModule,
@@ -29,10 +26,11 @@ import { TelefonoModule } from './telefono/telefono.module';
     BrowserAnimationsModule,
     InputTextModule,
     AddEditClienteModule,
-    ChartModule
-  ],
+    TelefonoModule,
+    ChartModule,
+    ],
   exports: [
     ClienteComponent,
-    TelefonoComponent  ]
+  ]
 })
 export class ClienteModule { }
