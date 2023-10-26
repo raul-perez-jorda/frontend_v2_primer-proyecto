@@ -8,12 +8,14 @@ import { CheckboxModule } from 'primeng/checkbox';
 import { RadioButtonModule } from 'primeng/radiobutton';
 import { TableModule } from 'primeng/table';
 import { ChartModule } from 'primeng/chart';
+import { CalendarModule } from 'primeng/calendar';
+import { InplaceModule } from 'primeng/inplace';
 
 import { TelefonoComponent } from './telefono.component';
 
 @NgModule({
   declarations: [
-    TelefonoComponent
+    TelefonoComponent,
   ],
   imports: [
     CommonModule,
@@ -24,7 +26,9 @@ import { TelefonoComponent } from './telefono.component';
     FormsModule,
     ButtonModule,
     TableModule,
-    ChartModule
+    ChartModule,
+    CalendarModule,
+    InplaceModule
   ],
   exports: [
     TelefonoComponent

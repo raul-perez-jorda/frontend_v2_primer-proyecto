@@ -27,6 +27,10 @@ export class ClienteService {
     return this.http.post('http://localhost:3000/clientes/:id_cli/telefonos',postData)
   }
 
+  saveConsumo(postData: any): Observable<any> {
+    return this.http.post('http://localhost:3000/consumos',postData)
+  }
+
   eliminaCliente(id_cli: any): Observable<any> {
     return this.http.delete('http://localhost:3000/clientes/'+id_cli)
   }

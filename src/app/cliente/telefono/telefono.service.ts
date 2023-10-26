@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Telefono, Consumo } from './telefono';
+import { Telefono, Consumo, Estadisticas } from './telefono';
 
 @Injectable({
   providedIn: 'root'
@@ -16,5 +16,9 @@ export class TelefonoService {
 
   getConsumos(id_cli:number, id_tel:number): Observable<Consumo[]> {
     return this.http.get<Consumo[]>('http://localhost:3000/clientes/'+id_cli+'/telefonos/'+id_tel+'/consumos')
+  }
+
+  getEstadisticasConsumo(id_cli:number, id_tel:number): Observable<Estadisticas[]> {
+    return this.http.get<Estadisticas[]>('http://localhost:3000/clientes/'+id_cli+'/telefonos/'+id_tel+'/estadisticas-consumo')
   }
 }

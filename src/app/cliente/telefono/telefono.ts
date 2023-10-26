@@ -13,6 +13,19 @@ export interface NuevoTelefono {
 export interface Consumo {
     id_cli: number;
     id_tel: number;
+    consumo: number;
     fecha: Date;
-    consumo?: number;
+}
+
+export interface NuevoConsumo {
+    id_cli: number;
+    id_tel: number;
+    consumo: number;
+    fecha: string;
+}
+
+export interface Estadisticas {
+    media_consumo: number;
+    max_consumo: number;
+    min_consumo: number;
 }
