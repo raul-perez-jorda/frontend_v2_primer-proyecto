@@ -19,6 +19,10 @@ export class ClienteService {
     return this.http.get<Cliente[]>('http://localhost:3000/clientes');
   }
 
+  getCliente(id_cli: any): Observable<any> {
+    return this.http.get<any>('http://localhost:3000/clientes/'+ id_cli);
+  } 
+
   saveCliente(postData: any): Observable<RespuestaCliente> {
     return this.http.post<RespuestaCliente>('http://localhost:3000/clientes', postData);
   }

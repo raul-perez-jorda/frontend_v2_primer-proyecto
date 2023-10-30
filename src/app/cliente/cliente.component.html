@@ -12,6 +12,7 @@
                 <th>Id.</th>
                 <th>Nombre</th>
                 <th>Teléfono</th>
+                <th>Correo electrónico</th>
                 <th></th>
             </tr>
         </ng-template>
@@ -19,6 +20,7 @@
             <tr style="text-align: center;">
                 <td>{{ cliente.id_cli }}</td>
                 <td>{{ cliente.nombre }}</td>
+                <td>{{ cliente.email }}</td>
                 <td><p-button label="Ver teléfonos" size="small" 
                     (click)="showTelefonos(cliente.id_cli)"
                 ></p-button></td>

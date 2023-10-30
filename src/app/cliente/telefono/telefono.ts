@@ -1,3 +1,5 @@
+import jsPDF from "jspdf";
+
 export interface Telefono {
     id_tel: number;
     telefono: string;
@@ -28,4 +30,9 @@ export interface Estadisticas {
     media_consumo: number;
     max_consumo: number;
     min_consumo: number;
+}
+
+export interface DatosCorreo {
+    destinatario: string;
+    pdf: jsPDF;
 }

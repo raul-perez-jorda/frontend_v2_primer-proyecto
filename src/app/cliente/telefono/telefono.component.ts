@@ -1,9 +1,13 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { TelefonoService } from './telefono.service';
+import { EmailService } from '../email/email.service';
 import { ClienteService } from '../cliente.service';
-import { Telefono, Consumo, NuevoTelefono, NuevoConsumo, Estadisticas } from './telefono';
+import { Telefono, Consumo, NuevoTelefono, NuevoConsumo, Estadisticas, DatosCorreo } from './telefono';
 
+import * as Chart from 'chart.js/auto';
+import { jsPDF } from 'jspdf';
+import html2canvas from 'html2canvas';
 
 @Component({
   selector: 'app-telefono',
@@ -11,9 +15,13 @@ import { Telefono, Consumo, NuevoTelefono, NuevoConsumo, Estadisticas } from './
   styleUrls: ['./telefono.component.css']
 })
 
-export class TelefonoComponent implements OnInit {
+export class TelefonoComponent implements OnInit, AfterViewInit {
 
   @Input() id_cli !: number;
+
+  @ViewChild('chartConsumo') chartConsumo!: ElementRef;
+  @ViewChild('chartEstadisticas') chartEstadisticas!: ElementRef;
+
   ocultarGrafica!: boolean;
 
   telefonos: Telefono[] = [];
@@ -49,6 +57,11 @@ export class TelefonoComponent implements OnInit {
     min_consumo: 0
   }
 
+  datos_correo: DatosCorreo = {
+    destinatario: '',
+    pdf: new jsPDF()
+  }
+
   clienteSelected!: number;
   telefonoSelected!: number;
   inputNuevaFecha!: Date;
@@ -67,11 +80,16 @@ export class TelefonoComponent implements OnInit {
   consumo_min!: number;
 
   displayChart !: boolean;
+
+  email!: string;
+  doc = new jsPDF;
+  descargar_pdf = false;
   
   constructor(
     private fb: FormBuilder, 
     private telefonoService: TelefonoService, 
-    private clienteService: ClienteService) { }
+    private clienteService: ClienteService,
+    private emailService: EmailService) { }
 
   convertirFormatoFecha(fecha:Date) {
     const meses = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
@@ -85,7 +103,10 @@ export class TelefonoComponent implements OnInit {
   ngOnInit(): void {
     this.getTelefonoList();
     this.ocultarGrafica = true;
+  }
 
+  ngAfterViewInit() {
+    
   }
 
   getTelefonoList() {
@@ -281,7 +302,9 @@ export class TelefonoComponent implements OnInit {
         this.displayChart = true
 
       }
-    )    
+    )   
+
+    
   }
 
   addConsumo(inputNuevaFecha: Date, id_tel:number) {
@@ -300,6 +323,71 @@ export class TelefonoComponent implements OnInit {
       }
     );
     
+  }
+
+  generarPDF(descargar_pdf:boolean): void {
+    const chartConsumo = document.getElementById('chartConsumo');
+    const chartEstadisticas = document.getElementById('chartEstadisticas');
+    const tablaConsumos = document.getElementById('tablaConsumos');
+ 
+    if(chartConsumo && chartEstadisticas && tablaConsumos){
+ 
+      html2canvas(chartConsumo).then(canvas => {
+        this.doc = new jsPDF
+        const imgData = canvas.toDataURL('image/png');
+        const imgProps = this.doc.getImageProperties(imgData);
+        const pdfWidth = this.doc.internal.pageSize.getWidth();
+        const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+        this.doc.addImage(imgData, 'PNG', 0, 10, pdfWidth, pdfHeight);
+      });
+
+      html2canvas(chartEstadisticas).then(canvas => {
+        const imgData = canvas.toDataURL('image/png');
+        const imgProps = this.doc.getImageProperties(imgData);
+        const pdfWidth = this.doc.internal.pageSize.getWidth();
+        const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+        this.doc.addImage(imgData, 'PNG', 0, pdfHeight+50, pdfWidth, pdfHeight);
+        this.doc.addPage()
+      });
+
+      html2canvas(tablaConsumos).then(canvas => {
+        const imgData = canvas.toDataURL('image/png');
+        const imgProps = this.doc.getImageProperties(imgData);
+        const pdfWidth = this.doc.internal.pageSize.getWidth();
+        const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+        this.doc.addImage(imgData, 'PNG', 0, 20, pdfWidth, pdfHeight);
+        if (descargar_pdf==true){
+          this.doc.save('archivo.pdf');
+        }
+      });
+    } else {
+      console.error('Elemento con ID chartConsumo no encontrado.');
+      const pdf = new jsPDF();
+    }
+
+  }
+
+  enviarConsumosCorreo(clienteSelected:number) {
+    console.log(clienteSelected)
+    this.clienteService.getCliente(clienteSelected).subscribe(
+      responseEmail => {
+        this.datos_correo.destinatario = responseEmail[0].email;
+
+        this.generarPDF(false)
+        this.datos_correo.pdf = this.doc
+
+        console.log(this.datos_correo)
+
+        this.emailService.enviarCorreo(this.datos_correo).subscribe(
+          responseSend => {
+            console.log("Email enviado correctamente:", responseSend);
+          },
+          errorSend => {
+            console.error("Error al enviar email:", errorSend)
+          }
+        )
+      }
+    )
   }
   
 }

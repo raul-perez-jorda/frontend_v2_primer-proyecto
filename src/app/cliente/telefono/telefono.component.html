@@ -58,9 +58,9 @@
 
     <!--Pulsas boton de ver consumo-->
     <div *ngIf="displayChart" class="card">
-        <p-chart *ngIf="displayChart" type="line" [data]="data" [options]="options"></p-chart>
+        <p-chart id=chartConsumo *ngIf="displayChart" type="line" [data]="data" [options]="options"></p-chart>
 
-        <p-chart type="bar" [data]="basicData" [options]="basicOptions"></p-chart>
+        <p-chart id=chartEstadisticas type="bar" [data]="basicData" [options]="basicOptions"></p-chart>
 
         <!--Mostrar tabla de consumos-->
         <p-inplace>
@@ -69,7 +69,7 @@
             </ng-template>
             <ng-template pTemplate="content">
                 <span>
-                    <p-table [value]="consumos" [tableStyle]="{ 'width': '100%'}"
+                    <p-table id=tablaConsumos [value]="consumos" [tableStyle]="{ 'width': '100%'}"
                         selectionMode="single">
                         <ng-template pTemplate="header">
                             <tr>
@@ -126,9 +126,18 @@
                         </ng-template>
                     </p-inplace>
                 </span>
+                <br>
+                <p-button label="Exportar a pdf" 
+                    severity="danger" size="small" icon="pi pi-file-pdf"
+                    (onClick) = generarPDF(true)
+                ></p-button>
+                <p-button label="Enviar pdf al email del cliente" 
+                    severity="secondary" size="small" icon="pi pi-share-alt"
+                    (onClick)=enviarConsumosCorreo(this.clienteSelected)
+                ></p-button>
             </ng-template>
         </p-inplace>
-
+        
         
     </div>
 </div>

@@ -12,10 +12,12 @@ import { ChartModule } from 'primeng/chart';
 import { ClienteComponent } from './cliente.component';
 import { AddEditClienteModule } from './add-edit-cliente/add-edit-cliente.module';
 import { TelefonoModule } from './telefono/telefono.module';
+import { EmailComponent } from './email/email.component';
 
 @NgModule({
   declarations: [
     ClienteComponent,
+    EmailComponent,
   ],
   imports: [
     CommonModule,
