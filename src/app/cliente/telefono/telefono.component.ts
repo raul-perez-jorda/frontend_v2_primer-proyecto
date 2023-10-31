@@ -58,6 +58,7 @@ export class TelefonoComponent implements OnInit, AfterViewInit {
   }
 
   datos_correo: DatosCorreo = {
+    pdf_path: '',
     destinatario: '',
     pdf: new jsPDF()
   }
@@ -357,7 +358,7 @@ export class TelefonoComponent implements OnInit, AfterViewInit {
         const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
         this.doc.addImage(imgData, 'PNG', 0, 20, pdfWidth, pdfHeight);
         if (descargar_pdf==true){
-          this.doc.save('archivo.pdf');
+          this.doc.save('archivo'+new Date()+'.pdf');
         }
       });
     } else {
@@ -372,8 +373,9 @@ export class TelefonoComponent implements OnInit, AfterViewInit {
     this.clienteService.getCliente(clienteSelected).subscribe(
       responseEmail => {
         this.datos_correo.destinatario = responseEmail[0].email;
+        this.datos_correo.pdf_path = '/mnt/c/Users/rperez/Downloads/archivo.pdf'
 
-        this.generarPDF(false)
+        this.generarPDF(true)
         this.datos_correo.pdf = this.doc
 
         console.log(this.datos_correo)
