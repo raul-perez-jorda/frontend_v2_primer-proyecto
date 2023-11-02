@@ -56,9 +56,9 @@
         </ng-template>
     </p-inplace>    
 
-    <!--Pulsas boton de ver consumo-->
+    <!--Pulsas boton de ver consumo cuando ya hay consumos-->
     <div *ngIf="displayChart" class="card">
-        <p-chart id=chartConsumo *ngIf="displayChart" type="line" [data]="data" [options]="options"></p-chart>
+        <p-chart id=chartConsumo type="line" [data]="data" [options]="options"></p-chart>
 
         <p-chart id=chartEstadisticas type="bar" [data]="basicData" [options]="basicOptions"></p-chart>
 
@@ -129,15 +129,45 @@
                 <br>
                 <p-button label="Exportar a pdf" 
                     severity="danger" size="small" icon="pi pi-file-pdf"
-                    (onClick) = generarPDF(true)
+                    (onClick) = generarPDF(true,telefonoSelected)
                 ></p-button>
                 <p-button label="Enviar pdf al email del cliente" 
                     severity="secondary" size="small" icon="pi pi-share-alt"
-                    (onClick)=enviarConsumosCorreo(this.clienteSelected)
+                    (onClick)=enviarConsumosCorreo(this.clienteSelected,telefonoSelected)
                 ></p-button>
             </ng-template>
         </p-inplace>
-        
-        
+    </div>
+    <!--Pulsas boton de ver consumo cuando NO hay consumos-->
+    <div *ngIf="aun_vacio" class="card">
+        <div> 
+            <h4>Añadir datos consumo:</h4>
+    
+            <div class="p-inputgroup">
+                <span class="p-inputgroup-addon">
+                    <i class="pi pi-bolt"></i>
+                </span>
+                <input type="number" [(ngModel)]="nuevo_consumo.consumo" placeholder="Consumo" />
+                <small 
+                    class="p-error block"
+                    *ngIf="
+                        consumoForm.controls['consumo'].invalid && 
+                        consumoForm.controls['consumo'].dirty
+                    "
+                >Este campo es obligatorio</small>
+            </div>
+            <div class="p-inputgroup">
+                <span class="p-inputgroup-addon">
+                    <i class="pi pi-calendar"></i>
+                </span>
+                <p-calendar [(ngModel)]="inputNuevaFecha" type="date" view="month" dateFormat="mm/yy" [readonlyInput]="true"></p-calendar>
+            </div>
+    
+            <p-button 
+                (click) = addConsumo(inputNuevaFecha,telefonoSelected)
+                icon="pi pi-plus" [text]="true" [rounded]="true" 
+                [disabled]="consumoForm.invalid" 
+            ></p-button>
+        </div>
     </div>
 </div>

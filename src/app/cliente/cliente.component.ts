@@ -10,8 +10,15 @@ import { Cliente } from './cliente';
 export class ClienteComponent {
 
   clientes: Cliente[] = [];
+  clienteSelected: Cliente = {
+    id_cli: 0,
+    nombre: '',
+    email: '',
+
+  };
   displayAddModal = false;
   displayTelefonos = false;
+  modo_editar = false;
   idSelected!: number;
   
   constructor(private clienteService: ClienteService ) { }
@@ -31,6 +38,7 @@ export class ClienteComponent {
 
   showAddModal() {
     this.displayAddModal = true;
+    this.modo_editar = false;
   }
 
   hideAddModal(isClosed: boolean) {
@@ -41,6 +49,12 @@ export class ClienteComponent {
   showTelefonos( id_cli: number ) {
     this.idSelected = id_cli;
     this.displayTelefonos = true;
+  }
+
+  editClient( cliente: Cliente ) {
+    this.clienteSelected = cliente;
+    this.displayAddModal = true;
+    this.modo_editar = true;
   }
 
   deleteClient( id_cli: number ) {

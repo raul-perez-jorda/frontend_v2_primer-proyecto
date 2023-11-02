@@ -35,6 +35,10 @@ export class ClienteService {
     return this.http.post('http://localhost:3000/consumos',postData)
   }
 
+  updateCliente(id_cli: number, putData: any): Observable<any> {
+    return this.http.put('http://localhost:3000/clientes/'+id_cli, putData)
+  }
+
   eliminaCliente(id_cli: any): Observable<any> {
     return this.http.delete('http://localhost:3000/clientes/'+id_cli)
   }

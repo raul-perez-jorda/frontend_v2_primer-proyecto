@@ -1,4 +1,4 @@
-<p-dialog header="Añadir cliente:" [(visible)]="displayAddModal" [modal]="true" [style]="{ width: '50vw' }"
+<p-dialog header="Datos cliente:" [(visible)]="displayAddModal" [modal]="true" [style]="{ width: '50vw' }"
     [draggable]="false" [resizable]="false" (onHide)="closeModal()">
 
     <form [formGroup]="clienteForm">
@@ -15,18 +15,17 @@
                 "
                 >Este campo es obligatorio</small>
         </div>
-        <div class="p-inputgroup" for="telefono">
+        <div class="p-inputgroup" for="email">
+            <span class="p-inputgroup-addon">
+                <i class="pi pi-at"></i>
+            </span>
+            <input type="text" pInputText id="email" formControlName="email" placeholder="Correo electrónico"/>
+        </div>
+        <div *ngIf="modo_editar==false" class="p-inputgroup" for="telefono">
             <span class="p-inputgroup-addon">#</span>
             <input type="text" pInputText id="telefono" formControlName="telefono" placeholder="Teléfono" />
-            <small 
-                class="p-error block"
-                *ngIf="
-                    clienteForm.controls['telefono'].invalid && 
-                    clienteForm.controls['telefono'].dirty
-                "
-                >Este campo es obligatorio</small>
         </div>
-        <div class="p-inputgroup" for="descripc_tel">
+        <div *ngIf="modo_editar==false" class="p-inputgroup" for="descripc_tel">
             <span class="p-inputgroup-addon">
                 <i class="pi pi-id-card"></i>
             </span>
@@ -41,8 +40,16 @@
             styleClass="p-button-text"
         ></p-button>
         <p-button 
+            *ngIf="modo_editar==false"
             (click)="addCliAndTel()" 
             label="Añadir" 
+            [disabled]="clienteForm.invalid"
+            styleClass="p-button-text"
+        ></p-button>
+        <p-button 
+            *ngIf="modo_editar==true"
+            (click)="editClient()" 
+            label="Editar" 
             [disabled]="clienteForm.invalid"
             styleClass="p-button-text"
         ></p-button>

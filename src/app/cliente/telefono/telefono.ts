@@ -35,5 +35,5 @@ export interface Estadisticas {
 export interface DatosCorreo {
     pdf_path: string;
     destinatario: string;
-    pdf: jsPDF;
+    nombre_archivo: string;
 }

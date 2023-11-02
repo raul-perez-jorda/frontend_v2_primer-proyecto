@@ -6,13 +6,14 @@
 <div class="card">
     <p-table 
     [value]="clientes" [tableStyle]="{ 'min-width': '50rem' }" 
-    [paginator]="true" [rows]="8">
+    [paginator]="false" [rows]="8">
         <ng-template pTemplate="header">
             <tr>
-                <th>Id.</th>
-                <th>Nombre</th>
+                <th pSortableColumn="id_cli">Id.<p-sortIcon field="code"></p-sortIcon></th>
+                <th pSortableColumn="nombre">Nombre<p-sortIcon field="code"></p-sortIcon></th>
+                <th pSortableColumn="email">Correo electrónico<p-sortIcon field="code"></p-sortIcon></th>
                 <th>Teléfono</th>
-                <th>Correo electrónico</th>
+                <th></th>
                 <th></th>
             </tr>
         </ng-template>
@@ -24,6 +25,9 @@
                 <td><p-button label="Ver teléfonos" size="small" 
                     (click)="showTelefonos(cliente.id_cli)"
                 ></p-button></td>
+                <td><p-button icon="pi pi-pencil" severity="success" [text]="true"
+                    (click)="editClient(cliente)"
+                ></p-button></td>
                 <td><p-button icon="pi pi-trash" severity="danger" [text]="true"
                     (click)="deleteClient(cliente.id_cli)"
                 ></p-button></td>
@@ -34,6 +38,8 @@
 
 <app-add-edit-cliente 
     [displayAddModal]="displayAddModal"
+    [modo_editar]="modo_editar"
+    [clienteSelected]="clienteSelected"
     (clickClose) = "hideAddModal($event)"
 ></app-add-edit-cliente>
 

@@ -23,6 +23,7 @@ export class TelefonoComponent implements OnInit, AfterViewInit {
   @ViewChild('chartEstadisticas') chartEstadisticas!: ElementRef;
 
   ocultarGrafica!: boolean;
+  aun_vacio = false; //de primeras no se sabe si esta lleno o vacio
 
   telefonos: Telefono[] = [];
 
@@ -60,19 +61,17 @@ export class TelefonoComponent implements OnInit, AfterViewInit {
   datos_correo: DatosCorreo = {
     pdf_path: '',
     destinatario: '',
-    pdf: new jsPDF()
+    nombre_archivo: ''
   }
 
   clienteSelected!: number;
-  telefonoSelected!: number;
+  telefonoSelected = 0;
   inputNuevaFecha!: Date;
 
 
   //Parametros de las graficas
   data: any;
   basicData: any;
-  options: any;
-  basicOptions: any;
   labels_ejex: any;
   data_consumos: any;
 
@@ -82,9 +81,113 @@ export class TelefonoComponent implements OnInit, AfterViewInit {
 
   displayChart !: boolean;
 
+  // Variables para el aspecto gráfico de las gráficas
+  documentStyle = getComputedStyle(document.documentElement);
+    textColor = this.documentStyle.getPropertyValue('--text-color');
+    textColorSecondary = this.documentStyle.getPropertyValue('--text-color-secondary');
+    surfaceBorder = this.documentStyle.getPropertyValue('--surface-border');
+  options = {
+    maintainAspectRatio: false,
+    aspectRatio: 0.6,
+    plugins: {
+      plugins: {
+        title: {
+          display: true,
+          text: 'Consumos',
+          align: 'center',
+          font: {
+            size: 16,
+            weight: 'bold'
+          },
+          padding: {
+            top: 10,
+          }
+        },
+        legend: {
+          display: false, // Establece display en false para ocultar el legend
+        },
+      },
+      tooltips: {
+        callbacks: {
+          label: function (tooltipItem:any) {
+            return tooltipItem.yLabel;
+          },
+        },
+      }
+    },
+    scales: {
+        x: {
+            ticks: {
+                color: this.textColorSecondary
+            },
+            grid: {
+                color: this.surfaceBorder,
+                drawBorder: false
+            }
+        },
+        y: {
+            ticks: {
+                color: this.textColorSecondary
+            },
+            grid: {
+                color: this.surfaceBorder,
+                drawBorder: false
+            }
+        }
+    },
+}
+  basicOptions = {
+    plugins: {
+      title: {
+        display: true,
+        text: 'Estadísticas', 
+        align: 'center',
+        font: {
+          size: 16,
+          weight: 'bold'
+        },
+        padding: {
+          top: 10,
+        }
+      },
+      legend: {
+        display: false, // Establece display en false para ocultar el legend
+      },
+    },
+    tooltips: {
+      callbacks: {
+        label: function (tooltipItem:any) {
+          return tooltipItem.yLabel;
+        },
+      },
+    },
+    scales: {
+        y: {
+            beginAtZero: true,
+            ticks: {
+                color: this.textColorSecondary
+            },
+            grid: {
+                color: this.surfaceBorder,
+                drawBorder: false
+            }
+        },
+        x: {
+            ticks: {
+                color: this.textColorSecondary
+            },
+            grid: {
+                color: this.surfaceBorder,
+                drawBorder: false
+            }
+        }
+    }
+  };
+
   email!: string;
   doc = new jsPDF;
   descargar_pdf = false;
+  nombre_archivo = '';
   
   constructor(
     private fb: FormBuilder, 
@@ -144,23 +247,21 @@ export class TelefonoComponent implements OnInit, AfterViewInit {
     this.telefonoSelected= id_tel
 
     this.ocultarGrafica = false;
-    const documentStyle = getComputedStyle(document.documentElement);
-    const textColor = documentStyle.getPropertyValue('--text-color');
-    const textColorSecondary = documentStyle.getPropertyValue('--text-color-secondary');
-    const surfaceBorder = documentStyle.getPropertyValue('--surface-border');
+    
 
     console.log("cliente: "+this.clienteSelected+'\ntelefono: '+this.telefonoSelected);
 
     this.telefonoService.getConsumos(this.id_cli, id_tel).subscribe(
       response => {
         this.consumos = response;
+        console.log(this.consumos)
+
 
         // Mostrar grafica de consumos de cada mes
         this.data_consumos = this.consumos.map(el => el.consumo)
 
         this.labels_ejex = this.consumos.map((el: Consumo) => this.convertirFormatoFecha(el.fecha));
 
-        console.log(this.data_consumos)
 
         this.data = {
             labels: this.labels_ejex,
@@ -169,61 +270,11 @@ export class TelefonoComponent implements OnInit, AfterViewInit {
                     label: 'Consumos',
                     data: this.data_consumos,
                     fill: false,
-                    borderColor: documentStyle.getPropertyValue('--blue-500'),
+                    borderColor: this.documentStyle.getPropertyValue('--blue-500'),
                     tension: 0.4
                 },
             ]
-        };
-        this.options = {
-            maintainAspectRatio: false,
-            aspectRatio: 0.6,
-            plugins: {
-              plugins: {
-                title: {
-                  display: true,
-                  text: 'Consumos',
-                  align: 'center',
-                  font: {
-                    size: 16,
-                    weight: 'bold'
-                  },
-                  padding: {
-                    top: 10,
-                  }
-                },
-                legend: {
-                  display: false, // Establece display en false para ocultar el legend
-                },
-              },
-              tooltips: {
-                callbacks: {
-                  label: function (tooltipItem:any) {
-                    return tooltipItem.yLabel;
-                  },
-                },
-              }
-            },
-            scales: {
-                x: {
-                    ticks: {
-                        color: textColorSecondary
-                    },
-                    grid: {
-                        color: surfaceBorder,
-                        drawBorder: false
-                    }
-                },
-                y: {
-                    ticks: {
-                        color: textColorSecondary
-                    },
-                    grid: {
-                        color: surfaceBorder,
-                        drawBorder: false
-                    }
-                }
-            },
-        }
+        };       
 
         this.telefonoService.getEstadisticasConsumo(this.id_cli, id_tel).subscribe(
           responseEstadisticas => {
@@ -243,69 +294,24 @@ export class TelefonoComponent implements OnInit, AfterViewInit {
                       
                   }
                 ]
-              };
-      
-              this.basicOptions = {
-                plugins: {
-                  title: {
-                    display: true,
-                    text: 'Estadísticas',
-                    align: 'center',
-                    font: {
-                      size: 16,
-                      weight: 'bold'
-                    },
-                    padding: {
-                      top: 10,
-                    }
-                  },
-                  legend: {
-                    display: false, // Establece display en false para ocultar el legend
-                  },
-                },
-                tooltips: {
-                  callbacks: {
-                    label: function (tooltipItem:any) {
-                      return tooltipItem.yLabel;
-                    },
-                  },
-                },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        ticks: {
-                            color: textColorSecondary
-                        },
-                        grid: {
-                            color: surfaceBorder,
-                            drawBorder: false
-                        }
-                    },
-                    x: {
-                        ticks: {
-                            color: textColorSecondary
-                        },
-                        grid: {
-                            color: surfaceBorder,
-                            drawBorder: false
-                        }
-                    }
-                }
-              };
+              };        
               
+              if (this.labels_ejex.length > 0) {
+                this.displayChart = true
+                this.aun_vacio = false
+              }
+              else {
+                this.displayChart = false
+                this.aun_vacio = true
+              }
             }
             else {
-              console.error('El array de estadisticas esta vacio')
-            }            
+              console.log('El array de estadisticas esta vacio')
+            }              
           }
-        );        
-
-        this.displayChart = true
-
+        );            
       }
     )   
-
-    
   }
 
   addConsumo(inputNuevaFecha: Date, id_tel:number) {
@@ -326,10 +332,12 @@ export class TelefonoComponent implements OnInit, AfterViewInit {
     
   }
 
-  generarPDF(descargar_pdf:boolean): void {
+  generarPDF(descargar_pdf:boolean, telefonoSelected:number): void {
     const chartConsumo = document.getElementById('chartConsumo');
     const chartEstadisticas = document.getElementById('chartEstadisticas');
     const tablaConsumos = document.getElementById('tablaConsumos');
+
+    this.nombre_archivo = 'consumos_'+telefonoSelected+'.pdf';
  
     if(chartConsumo && chartEstadisticas && tablaConsumos){
  
@@ -358,7 +366,7 @@ export class TelefonoComponent implements OnInit, AfterViewInit {
         const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
         this.doc.addImage(imgData, 'PNG', 0, 20, pdfWidth, pdfHeight);
         if (descargar_pdf==true){
-          this.doc.save('archivo'+new Date()+'.pdf');
+          this.doc.save(this.nombre_archivo);
         }
       });
     } else {
@@ -368,15 +376,16 @@ export class TelefonoComponent implements OnInit, AfterViewInit {
 
   }
 
-  enviarConsumosCorreo(clienteSelected:number) {
+  enviarConsumosCorreo(clienteSelected:number, telefonoSelected:number) {
     console.log(clienteSelected)
     this.clienteService.getCliente(clienteSelected).subscribe(
       responseEmail => {
         this.datos_correo.destinatario = responseEmail[0].email;
-        this.datos_correo.pdf_path = '/mnt/c/Users/rperez/Downloads/archivo.pdf'
 
-        this.generarPDF(true)
-        this.datos_correo.pdf = this.doc
+        this.generarPDF(true, telefonoSelected)
+        this.datos_correo.pdf_path = '/mnt/c/Users/rperez/Downloads/'+this.nombre_archivo
+        this.datos_correo.nombre_archivo = this.nombre_archivo
+
 
         console.log(this.datos_correo)
 
