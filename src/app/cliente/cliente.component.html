@@ -28,7 +28,9 @@
                 <td><p-button icon="pi pi-pencil" severity="success" [text]="true"
                     (click)="editClient(cliente)"
                 ></p-button></td>
-                <td><p-button icon="pi pi-trash" severity="danger" [text]="true"
+                <td><p-toast></p-toast>
+                    <p-confirmDialog [style]="{width: '50vw'}"></p-confirmDialog>
+                    <p-button icon="pi pi-trash" severity="danger" [text]="true"
                     (click)="deleteClient(cliente.id_cli)"
                 ></p-button></td>
             </tr>
@@ -51,7 +53,7 @@
     [draggable]="false" 
     [resizable]="false">
     <p class="m-0">
-        <app-telefono *ngIf="displayTelefonos" [id_cli]="idSelected"></app-telefono>
+        <app-telefono *ngIf="displayTelefonos" [id_cliSelected]="this.id_cliSelected"></app-telefono>
     </p>
     <ng-template pTemplate="footer">
         <p-button (click)="displayTelefonos = false" label="Volver" styleClass="p-button-text"></p-button>

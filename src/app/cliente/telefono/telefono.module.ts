@@ -10,6 +10,8 @@ import { TableModule } from 'primeng/table';
 import { ChartModule } from 'primeng/chart';
 import { CalendarModule } from 'primeng/calendar';
 import { InplaceModule } from 'primeng/inplace';
+import { ToastModule } from 'primeng/toast';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
 
 import { TelefonoComponent } from './telefono.component';
 
@@ -28,7 +30,9 @@ import { TelefonoComponent } from './telefono.component';
     TableModule,
     ChartModule,
     CalendarModule,
-    InplaceModule
+    InplaceModule,
+    ToastModule,
+    ConfirmDialogModule
   ],
   exports: [
     TelefonoComponent

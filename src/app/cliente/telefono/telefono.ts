@@ -15,6 +15,7 @@ export interface NuevoTelefono {
 export interface Consumo {
     id_cli: number;
     id_tel: number;
+    id_consumo: number;
     consumo: number;
     fecha: Date;
 }

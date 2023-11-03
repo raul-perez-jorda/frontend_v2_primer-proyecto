@@ -2,10 +2,13 @@ import { Component } from '@angular/core';
 import { ClienteService } from './cliente.service';
 import { Cliente } from './cliente';
 
+import { ConfirmationService, MessageService, ConfirmEventType } from 'primeng/api';
+
 @Component({
   selector: 'app-cliente',
   templateUrl: './cliente.component.html',
-  styleUrls: ['./cliente.component.css']
+  styleUrls: ['./cliente.component.css'],
+  providers: [ConfirmationService, MessageService]
 })
 export class ClienteComponent {
 
@@ -19,9 +22,9 @@ export class ClienteComponent {
   displayAddModal = false;
   displayTelefonos = false;
   modo_editar = false;
-  idSelected!: number;
+  id_cliSelected!: number;
   
-  constructor(private clienteService: ClienteService ) { }
+  constructor(private clienteService: ClienteService, private confirmationService: ConfirmationService, private messageService: MessageService) { }
 
   ngOnInit(): void {
     this.getClienteList();
@@ -47,7 +50,7 @@ export class ClienteComponent {
   }
 
   showTelefonos( id_cli: number ) {
-    this.idSelected = id_cli;
+    this.id_cliSelected = id_cli;
     this.displayTelefonos = true;
   }
 
@@ -58,12 +61,25 @@ export class ClienteComponent {
   }
 
   deleteClient( id_cli: number ) {
-    this.clienteService.eliminaCliente(id_cli).subscribe(
-      responseElimina => {
-        console.log(responseElimina);
-        this.getClienteList();
+    this.confirmationService.confirm({
+      message: '¿Estás seguro de que quieres eliminar?',
+      header: 'Confirmación',
+      icon: 'pi pi-exclamation-triangle',
+      accept: () => {
+          this.messageService.add({ severity: 'info', summary: 'Confirmado', detail: 'Cliente eliminado' });
+
+          this.clienteService.eliminaCliente(id_cli).subscribe(
+            responseElimina => {
+              console.log(responseElimina);
+              this.confirmationService.close();
+              this.getClienteList();
+            }
+          );
+      },
+      reject: () => {
+        this.confirmationService.close();
       }
-    );
+    });    
   }
 
 }

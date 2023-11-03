@@ -5,9 +5,12 @@ import { EmailService } from '../email/email.service';
 import { ClienteService } from '../cliente.service';
 import { Telefono, Consumo, NuevoTelefono, NuevoConsumo, Estadisticas, DatosCorreo } from './telefono';
 
+import { ConfirmationService, MessageService, ConfirmEventType } from 'primeng/api';
+
 import * as Chart from 'chart.js/auto';
 import { jsPDF } from 'jspdf';
 import html2canvas from 'html2canvas';
+import { delay } from 'rxjs';
 
 @Component({
   selector: 'app-telefono',
@@ -17,13 +20,10 @@ import html2canvas from 'html2canvas';
 
 export class TelefonoComponent implements OnInit, AfterViewInit {
 
-  @Input() id_cli !: number;
+  @Input() id_cliSelected !: number;
 
   @ViewChild('chartConsumo') chartConsumo!: ElementRef;
   @ViewChild('chartEstadisticas') chartEstadisticas!: ElementRef;
-
-  ocultarGrafica!: boolean;
-  aun_vacio = false; //de primeras no se sabe si esta lleno o vacio
 
   telefonos: Telefono[] = [];
 
@@ -65,9 +65,9 @@ export class TelefonoComponent implements OnInit, AfterViewInit {
   }
 
   clienteSelected!: number;
-  telefonoSelected = 0;
+  id_telSelected = 0;
   inputNuevaFecha!: Date;
-
+  id_consumoSelected!: number;
 
   //Parametros de las graficas
   data: any;
@@ -79,7 +79,18 @@ export class TelefonoComponent implements OnInit, AfterViewInit {
   consumo_max!: number;
   consumo_min!: number;
 
+  //Variables booleanas
+  aun_vacio = false; //de primeras no se sabe si esta lleno o vacio
   displayChart !: boolean;
+  modo_editar_telefono = false;
+  modo_editar_consumo = false;
+
+  email!: string;
+  doc = new jsPDF;
+  descargar_pdf = false;
+  nombre_archivo = '';
+  dateStamp = '';
+
 
   // Variables para el aspecto gráfico de las gráficas
   documentStyle = getComputedStyle(document.documentElement);
@@ -184,16 +195,15 @@ export class TelefonoComponent implements OnInit, AfterViewInit {
     }
   };
 
-  email!: string;
-  doc = new jsPDF;
-  descargar_pdf = false;
-  nombre_archivo = '';
+
   
   constructor(
     private fb: FormBuilder, 
     private telefonoService: TelefonoService, 
     private clienteService: ClienteService,
-    private emailService: EmailService) { }
+    private emailService: EmailService,
+    private confirmationService: ConfirmationService,
+    private messageService: MessageService) { }
 
   convertirFormatoFecha(fecha:Date) {
     const meses = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
@@ -206,7 +216,6 @@ export class TelefonoComponent implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
     this.getTelefonoList();
-    this.ocultarGrafica = true;
   }
 
   ngAfterViewInit() {
@@ -214,7 +223,7 @@ export class TelefonoComponent implements OnInit, AfterViewInit {
   }
 
   getTelefonoList() {
-    this.telefonoService.getTelefonos(this.id_cli).subscribe(
+    this.telefonoService.getTelefonos(this.id_cliSelected).subscribe(
       response => {
         this.telefonos = response;
       }
@@ -223,7 +232,7 @@ export class TelefonoComponent implements OnInit, AfterViewInit {
 
   addTelefono() {
     this.nuevo_telefono = {
-      "id_cli": this.id_cli, 
+      "id_cli": this.id_cliSelected, 
       "telefono" : `${this.telefonoForm.value.telefono}`, 
       "descripc_tel": `${this.telefonoForm.value.descripc_tel}`
     };
@@ -231,6 +240,8 @@ export class TelefonoComponent implements OnInit, AfterViewInit {
     this.clienteService.saveTelefono(this.nuevo_telefono).subscribe(
       responseTelefono => {
         console.log(responseTelefono)
+
+        this.getTelefonoList();
       },
       errorTelefono => {
         console.error(errorTelefono);
@@ -238,24 +249,90 @@ export class TelefonoComponent implements OnInit, AfterViewInit {
     )
 
     this.telefonoForm.reset();
-    location.reload();
   }
 
-  getConsumosTelefono(id_tel:number, id_cli:number) {
+  mostrarEditarTelefono(telefonoSelected: Telefono) {
+    this.modo_editar_telefono = true
+    this.id_telSelected = telefonoSelected.id_tel
+
+    this.telefonoForm.patchValue({
+      telefono: telefonoSelected.telefono,
+      descripc_tel: telefonoSelected.descripc_tel
+    })
+  }
+
+  mostrarEditarConsumo(consumoSelected: Consumo) {
+    this.modo_editar_consumo = true
+    this.id_consumoSelected = consumoSelected.id_consumo
+
+    this.nuevo_consumo.consumo= consumoSelected.consumo
+    this.inputNuevaFecha = consumoSelected.fecha
+  }
+
+  editarTelefono(modo: boolean, id_telSelected:number){
+    if (modo==true) {
+      this.telefonoService.updateTelefono(id_telSelected, this.telefonoForm.value).subscribe(
+        responsePut => {
+          console.log(responsePut)
+
+          this.getTelefonoList()
+        }
+      )
+    }
+    this.telefonoForm.reset()
+    this.modo_editar_telefono = false
+    this.telefonoForm.patchValue({
+      telefono: '',
+      descripc_tel: ''
+    })
+  }
+
+  eliminaTelefono(id_tel: number) {
+    this.confirmationService.confirm({
+      message: '¿Estás seguro de que quieres eliminar?',
+      header: 'Confirmación',
+      icon: 'pi pi-exclamation-triangle',
+      accept: () => {
+          this.messageService.add({ severity: 'info', summary: 'Confirmado', detail: 'Teléfono eliminado' });
+
+          this.telefonoService.deleteTelefono(id_tel).subscribe(
+            responseDelete => {
+              console.log(responseDelete)
+      
+              //location.reload()
+              this.confirmationService.close();
+              this.getTelefonoList();
+            }
+          )
+      },
+      reject: () => {
+        //location.reload()
+        this.confirmationService.close();
+
+      }
+    });        
+  }
+
+  eliminaConsumo(id_consumo: number) {
+    this.telefonoService.deleteConsumo(id_consumo).subscribe(
+      responseDelete => {
+        console.log(responseDelete)
+        this.getConsumosTelefono(this.id_telSelected)
+      },
+      errorDelete => {
+        console.error(errorDelete)
+      }
+    )    
+  }
+
+  getConsumosTelefono(id_tel:number) {
     this.displayChart = false
-    this.clienteSelected= this.id_cli
-    this.telefonoSelected= id_tel
-
-    this.ocultarGrafica = false;
+    this.clienteSelected= this.id_cliSelected
+    this.id_telSelected= id_tel
     
-
-    console.log("cliente: "+this.clienteSelected+'\ntelefono: '+this.telefonoSelected);
-
-    this.telefonoService.getConsumos(this.id_cli, id_tel).subscribe(
+    this.telefonoService.getConsumos(this.id_cliSelected, id_tel).subscribe(
       response => {
         this.consumos = response;
-        console.log(this.consumos)
-
 
         // Mostrar grafica de consumos de cada mes
         this.data_consumos = this.consumos.map(el => el.consumo)
@@ -276,11 +353,10 @@ export class TelefonoComponent implements OnInit, AfterViewInit {
             ]
         };       
 
-        this.telefonoService.getEstadisticasConsumo(this.id_cli, id_tel).subscribe(
+        this.telefonoService.getEstadisticasConsumo(this.id_cliSelected, id_tel).subscribe(
           responseEstadisticas => {
             if(responseEstadisticas.length>0) {
               this.estadisticas = responseEstadisticas[0];
-              console.log(this.estadisticas)
 
               this.basicData = {
                 labels: ['Media', 'Max.', 'Mín.'],
@@ -294,19 +370,14 @@ export class TelefonoComponent implements OnInit, AfterViewInit {
                       
                   }
                 ]
-              };        
-              
-              if (this.labels_ejex.length > 0) {
-                this.displayChart = true
-                this.aun_vacio = false
-              }
-              else {
-                this.displayChart = false
-                this.aun_vacio = true
-              }
+              };                      
+              this.displayChart = true
+              this.aun_vacio = false
             }
             else {
               console.log('El array de estadisticas esta vacio')
+              this.displayChart = false
+              this.aun_vacio = true
             }              
           }
         );            
@@ -316,87 +387,124 @@ export class TelefonoComponent implements OnInit, AfterViewInit {
 
   addConsumo(inputNuevaFecha: Date, id_tel:number) {
     this.nuevo_consumo = {
-      id_cli: this.id_cli,
+      id_cli: this.id_cliSelected,
       id_tel: id_tel,
       fecha:  inputNuevaFecha.toLocaleDateString("fr-CA"),
       consumo: this.nuevo_consumo.consumo,
-    }    
+    }
 
     this.clienteService.saveConsumo(this.nuevo_consumo).subscribe(
       responseConsumo => {
         console.log(responseConsumo)
 
-        this.getConsumosTelefono(this.nuevo_consumo.id_cli, this.nuevo_consumo.id_tel);
+        this.getConsumosTelefono(id_tel);
       }
     );
-    
   }
 
-  generarPDF(descargar_pdf:boolean, telefonoSelected:number): void {
-    const chartConsumo = document.getElementById('chartConsumo');
-    const chartEstadisticas = document.getElementById('chartEstadisticas');
-    const tablaConsumos = document.getElementById('tablaConsumos');
-
-    this.nombre_archivo = 'consumos_'+telefonoSelected+'.pdf';
- 
-    if(chartConsumo && chartEstadisticas && tablaConsumos){
- 
-      html2canvas(chartConsumo).then(canvas => {
-        this.doc = new jsPDF
-        const imgData = canvas.toDataURL('image/png');
-        const imgProps = this.doc.getImageProperties(imgData);
-        const pdfWidth = this.doc.internal.pageSize.getWidth();
-        const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
-        this.doc.addImage(imgData, 'PNG', 0, 10, pdfWidth, pdfHeight);
-      });
-
-      html2canvas(chartEstadisticas).then(canvas => {
-        const imgData = canvas.toDataURL('image/png');
-        const imgProps = this.doc.getImageProperties(imgData);
-        const pdfWidth = this.doc.internal.pageSize.getWidth();
-        const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
-        this.doc.addImage(imgData, 'PNG', 0, pdfHeight+50, pdfWidth, pdfHeight);
-        this.doc.addPage()
-      });
-
-      html2canvas(tablaConsumos).then(canvas => {
-        const imgData = canvas.toDataURL('image/png');
-        const imgProps = this.doc.getImageProperties(imgData);
-        const pdfWidth = this.doc.internal.pageSize.getWidth();
-        const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
-        this.doc.addImage(imgData, 'PNG', 0, 20, pdfWidth, pdfHeight);
-        if (descargar_pdf==true){
-          this.doc.save(this.nombre_archivo);
-        }
-      });
-    } else {
-      console.error('Elemento con ID chartConsumo no encontrado.');
-      const pdf = new jsPDF();
+  editarConsumo(modo: boolean, id_consumo:number, id_tel:number, inputNuevaFecha:Date){
+    this.nuevo_consumo = {
+      id_cli: this.id_cliSelected,
+      id_tel: id_tel,
+      fecha:  inputNuevaFecha.toLocaleDateString("fr-CA"),
+      consumo: this.nuevo_consumo.consumo,
     }
+    console.log(this.nuevo_consumo)
 
+    if (modo==true) {
+      this.telefonoService.updateConsumo(this.id_consumoSelected, this.nuevo_consumo).subscribe(
+        responsePut => {
+          console.log(responsePut)
+
+          this.getConsumosTelefono(this.id_telSelected)
+        }
+      )
+    }
+    this.consumoForm.reset()
+    this.modo_editar_consumo = false
+    this.consumoForm.patchValue({
+      consumo: 0,
+      fecha: new Date()
+    })
   }
 
-  enviarConsumosCorreo(clienteSelected:number, telefonoSelected:number) {
-    console.log(clienteSelected)
+  generarPDF(descargar_pdf: boolean, id_telSelected: number): Promise<void> {
+    return new Promise((resolve, reject) => {
+      const chartConsumo = document.getElementById('chartConsumo');
+      const chartEstadisticas = document.getElementById('chartEstadisticas');
+      const tablaConsumos = document.getElementById('tablaConsumos');
+  
+      this.dateStamp = new Date().getTime().toString();
+      this.nombre_archivo = 'consumos_' + id_telSelected + '_' + this.dateStamp + '.pdf';
+  
+      if (chartConsumo && chartEstadisticas && tablaConsumos) {
+        html2canvas(chartConsumo).then(canvas => {
+          this.doc = new jsPDF();
+          const imgData = canvas.toDataURL('image/png');
+          const imgProps = this.doc.getImageProperties(imgData);
+          const pdfWidth = this.doc.internal.pageSize.getWidth();
+          const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+          this.doc.addImage(imgData, 'PNG', 0, 10, pdfWidth, pdfHeight);
+        });
+  
+        html2canvas(chartEstadisticas).then(canvas => {
+          const imgData = canvas.toDataURL('image/png');
+          const imgProps = this.doc.getImageProperties(imgData);
+          const pdfWidth = this.doc.internal.pageSize.getWidth();
+          const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+          this.doc.addImage(imgData, 'PNG', 0, pdfHeight + 50, pdfWidth, pdfHeight);
+          this.doc.addPage();
+        });
+  
+        html2canvas(tablaConsumos).then(canvas => {
+          const imgData = canvas.toDataURL('image/png');
+          const imgProps = this.doc.getImageProperties(imgData);
+          const pdfWidth = this.doc.internal.pageSize.getWidth();
+          const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+          this.doc.addImage(imgData, 'PNG', 0, 20, pdfWidth, pdfHeight);
+          if (descargar_pdf == true) {
+            // Simula el tiempo de descarga con un delay de 5 segundos
+            setTimeout(() => {
+              this.doc.save(this.nombre_archivo);
+              console.log("PDF guardado correctamente");
+              resolve();
+            }, 3000);
+          } else {
+            resolve();
+          }
+        });
+      } else {
+        console.error('Elemento con ID chartConsumo no encontrado.');
+        reject("Elemento no encontrado");
+      }
+    });
+  }
+  
+
+  enviarConsumosCorreo(clienteSelected:number, id_telSelected:number) {
     this.clienteService.getCliente(clienteSelected).subscribe(
       responseEmail => {
         this.datos_correo.destinatario = responseEmail[0].email;
 
-        this.generarPDF(true, telefonoSelected)
-        this.datos_correo.pdf_path = '/mnt/c/Users/rperez/Downloads/'+this.nombre_archivo
-        this.datos_correo.nombre_archivo = this.nombre_archivo
-
-
-        console.log(this.datos_correo)
-
-        this.emailService.enviarCorreo(this.datos_correo).subscribe(
-          responseSend => {
-            console.log("Email enviado correctamente:", responseSend);
-          },
-          errorSend => {
-            console.error("Error al enviar email:", errorSend)
-          }
-        )
+        this.generarPDF(true, id_telSelected)
+          .then(() => {
+            this.datos_correo.pdf_path = '/mnt/c/Users/rperez/Downloads/'+this.nombre_archivo
+            this.datos_correo.nombre_archivo = this.nombre_archivo
+            
+            this.emailService.enviarCorreo(this.datos_correo).subscribe(
+              responseSend => {
+                console.log("Email enviado correctamente:", responseSend);
+                this.messageService.add({ severity: 'info', summary: 'Confirmado', detail: 'Correo enviado' })
+              },
+              errorSend => {
+                console.error("Error al enviar email:", errorSend)
+                this.messageService.add({ severity: 'danger', summary: 'Error', detail: 'Fallo al enviar el correo' })
+              }
+            )
+          })
+          .catch(error => {
+            console.error("Error al generar PDF:", error);
+          })
       }
     )
   }
