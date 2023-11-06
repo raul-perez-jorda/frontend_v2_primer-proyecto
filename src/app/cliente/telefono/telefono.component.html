@@ -16,7 +16,7 @@
                 <td>{{ telefono.telefono }}</td>
                 <td>{{ telefono.descripc_tel }}</td>
                 <td><p-button label="Ver consumo" severity="warning" size="small" 
-                    (click)="getConsumosTelefono(telefono.id_tel)"
+                    (click)="getConsumosTelefono(telefono)"
                 ></p-button></td>
                 <td><p-button icon="pi pi-pencil" severity="success" [text]="true"
                     (click)="mostrarEditarTelefono(telefono)"
@@ -214,12 +214,12 @@
     <br>
     <p-button label="Exportar a pdf" 
         severity="danger" size="small" icon="pi pi-file-pdf"
-        (onClick) = generarPDF(true,id_telSelected)
+        (onClick) = generarPDF(true,telefonoSelected.telefono)
     ></p-button>
     <p-toast></p-toast>
     <p-button label="Enviar pdf al email del cliente" 
         severity="secondary" size="small" icon="pi pi-share-alt"
-        (onClick)=enviarConsumosCorreo(this.clienteSelected,id_telSelected)
+        (onClick)=enviarConsumosCorreo(this.clienteSelected,telefonoSelected.telefono)
     ></p-button>
     </div>
     <!--Pulsas boton de ver consumo cuando NO hay consumos-->

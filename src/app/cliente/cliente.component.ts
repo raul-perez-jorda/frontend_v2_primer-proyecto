@@ -56,8 +56,8 @@ export class ClienteComponent {
 
   editClient( cliente: Cliente ) {
     this.clienteSelected = cliente;
-    this.displayAddModal = true;
     this.modo_editar = true;
+    this.displayAddModal = true;
   }
 
   deleteClient( id_cli: number ) {

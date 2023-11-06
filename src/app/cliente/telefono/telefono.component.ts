@@ -65,6 +65,7 @@ export class TelefonoComponent implements OnInit, AfterViewInit {
   }
 
   clienteSelected!: number;
+  telefonoSelected!: Telefono;
   id_telSelected = 0;
   inputNuevaFecha!: Date;
   id_consumoSelected!: number;
@@ -317,7 +318,7 @@ export class TelefonoComponent implements OnInit, AfterViewInit {
     this.telefonoService.deleteConsumo(id_consumo).subscribe(
       responseDelete => {
         console.log(responseDelete)
-        this.getConsumosTelefono(this.id_telSelected)
+        this.getConsumosTelefono(this.telefonoSelected)
       },
       errorDelete => {
         console.error(errorDelete)
@@ -325,12 +326,13 @@ export class TelefonoComponent implements OnInit, AfterViewInit {
     )    
   }
 
-  getConsumosTelefono(id_tel:number) {
+  getConsumosTelefono(telefono: Telefono) {
     this.displayChart = false
     this.clienteSelected= this.id_cliSelected
-    this.id_telSelected= id_tel
+    this.id_telSelected= telefono.id_tel
+    this.telefonoSelected = telefono;
     
-    this.telefonoService.getConsumos(this.id_cliSelected, id_tel).subscribe(
+    this.telefonoService.getConsumos(this.id_cliSelected, this.id_telSelected).subscribe(
       response => {
         this.consumos = response;
 
@@ -353,7 +355,7 @@ export class TelefonoComponent implements OnInit, AfterViewInit {
             ]
         };       
 
-        this.telefonoService.getEstadisticasConsumo(this.id_cliSelected, id_tel).subscribe(
+        this.telefonoService.getEstadisticasConsumo(this.id_cliSelected, this.id_telSelected).subscribe(
           responseEstadisticas => {
             if(responseEstadisticas.length>0) {
               this.estadisticas = responseEstadisticas[0];
@@ -397,7 +399,7 @@ export class TelefonoComponent implements OnInit, AfterViewInit {
       responseConsumo => {
         console.log(responseConsumo)
 
-        this.getConsumosTelefono(id_tel);
+        this.getConsumosTelefono(this.telefonoSelected);
       }
     );
   }
@@ -416,7 +418,7 @@ export class TelefonoComponent implements OnInit, AfterViewInit {
         responsePut => {
           console.log(responsePut)
 
-          this.getConsumosTelefono(this.id_telSelected)
+          this.getConsumosTelefono(this.telefonoSelected)
         }
       )
     }
@@ -428,23 +430,25 @@ export class TelefonoComponent implements OnInit, AfterViewInit {
     })
   }
 
-  generarPDF(descargar_pdf: boolean, id_telSelected: number): Promise<void> {
+  generarPDF(descargar_pdf: boolean, num_telefono:string): Promise<void> {
     return new Promise((resolve, reject) => {
       const chartConsumo = document.getElementById('chartConsumo');
       const chartEstadisticas = document.getElementById('chartEstadisticas');
       const tablaConsumos = document.getElementById('tablaConsumos');
   
       this.dateStamp = new Date().getTime().toString();
-      this.nombre_archivo = 'consumos_' + id_telSelected + '_' + this.dateStamp + '.pdf';
+      this.nombre_archivo = 'consumos_' + this.dateStamp + '.pdf';
   
       if (chartConsumo && chartEstadisticas && tablaConsumos) {
+        this.doc = new jsPDF();
+        this.agregarCabecera(num_telefono)
+
         html2canvas(chartConsumo).then(canvas => {
-          this.doc = new jsPDF();
           const imgData = canvas.toDataURL('image/png');
           const imgProps = this.doc.getImageProperties(imgData);
           const pdfWidth = this.doc.internal.pageSize.getWidth();
           const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
-          this.doc.addImage(imgData, 'PNG', 0, 10, pdfWidth, pdfHeight);
+          this.doc.addImage(imgData, 'PNG', 0, 20, pdfWidth, pdfHeight);
         });
   
         html2canvas(chartEstadisticas).then(canvas => {
@@ -481,12 +485,12 @@ export class TelefonoComponent implements OnInit, AfterViewInit {
   }
   
 
-  enviarConsumosCorreo(clienteSelected:number, id_telSelected:number) {
+  enviarConsumosCorreo(clienteSelected:number, num_telefono: string) {
     this.clienteService.getCliente(clienteSelected).subscribe(
       responseEmail => {
         this.datos_correo.destinatario = responseEmail[0].email;
 
-        this.generarPDF(true, id_telSelected)
+        this.generarPDF(true, num_telefono)
           .then(() => {
             this.datos_correo.pdf_path = '/mnt/c/Users/rperez/Downloads/'+this.nombre_archivo
             this.datos_correo.nombre_archivo = this.nombre_archivo
@@ -507,6 +511,11 @@ export class TelefonoComponent implements OnInit, AfterViewInit {
           })
       }
     )
+  }
+
+  agregarCabecera(num_telefono: string): void {
+    const cabecera = `Datos consumo del telefono ${num_telefono}`;
+    this.doc.text(cabecera, 10, 10);
   }
   
 }
