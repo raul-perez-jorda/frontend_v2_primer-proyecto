@@ -1,17 +1,19 @@
 import { Component } from '@angular/core';
-import { ClienteService } from './cliente.service';
-import { Cliente } from './cliente';
+import { ClienteService } from '../../services/cliente.service';
+import { Cliente } from '../../interfaces/cliente';
+import { AdministradorModule } from './administrador.module';
 
 import { ConfirmationService, MessageService, ConfirmEventType } from 'primeng/api';
+import { Router } from '@angular/router';
+import { LoginService } from 'src/app/services/login.service';
 
 @Component({
-  selector: 'app-cliente',
-  templateUrl: './cliente.component.html',
-  styleUrls: ['./cliente.component.css'],
+  selector: 'app-administrador',
+  templateUrl: './administrador.component.html',
+  styleUrls: ['./administrador.component.css'],
   providers: [ConfirmationService, MessageService]
 })
-export class ClienteComponent {
-
+export class AdministradorComponent {
   clientes: Cliente[] = [];
   clienteSelected: Cliente = {
     id_cli: 0,
@@ -23,8 +25,14 @@ export class ClienteComponent {
   displayTelefonos = false;
   modo_editar = false;
   id_cliSelected!: number;
+
+  token!: any;
   
-  constructor(private clienteService: ClienteService, private confirmationService: ConfirmationService, private messageService: MessageService) { }
+  constructor(private clienteService: ClienteService, 
+              private confirmationService: ConfirmationService, 
+              private messageService: MessageService,
+              private router: Router,
+              private loginService: LoginService) { }
 
   ngOnInit(): void {
     this.getClienteList();
@@ -37,6 +45,12 @@ export class ClienteComponent {
         this.clientes = response;
       }
     )
+  }
+
+  logOut() {
+    this.router.navigate(['/login']);
+    this.token = undefined;
+    this.loginService.setToken(this.token);
   }
 
   showAddModal() {
@@ -81,5 +95,4 @@ export class ClienteComponent {
       }
     });    
   }
-
 }

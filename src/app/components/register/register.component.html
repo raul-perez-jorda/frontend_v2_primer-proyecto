@@ -1,0 +1,75 @@
+<p-card header="Registrarse" class="register-card">
+    <form [formGroup]="registerForm" (ngSubmit)="submitDetails()" class="custom-form">
+        <div class="form-group">
+            <input
+              formControlName="nombre"
+              pInputText formControlName="nombre"
+              class="w-full"
+              name="nombre"
+              placeholder="nombre"
+            />
+            <small 
+              *ngIf="nombre.invalid && (nombre.dirty || nombre.touched)" 
+              class="block p-error"
+            >
+              <div *ngIf="nombre.errors?.['required']">Nombre es necesario</div>
+            </small>
+        </div>
+        <div class="form-group">
+            <input
+              formControlName="email"
+              pInputText formControlName="email"
+              class="w-full"
+              name="email"
+              placeholder="email"
+            />
+        </div>
+        <div class="form-group">
+            <input
+            formControlName="user"
+            pInputText formControlName="user"
+            class="w-full"
+            name="user"
+            placeholder="user"
+            />
+            <small 
+            *ngIf="user.invalid && (user.dirty || user.touched)" 
+            class="block p-error"
+            >
+            <div *ngIf="user.errors?.['required']">Usuario es necesario</div>
+            <div *ngIf="user.errors?.['user']">Usuario debe ser valido</div>
+            </small>
+        </div>
+        <div class="form-group">
+          <p-password [formControl]="password" [toggleMask]="true"></p-password>
+            <small 
+            *ngIf="password.invalid && (password.dirty || password.touched)"
+            class="block p-error"
+            >
+            <div *ngIf="password.errors?.['required']">Contraseña es necesario</div>
+            </small>
+        </div>
+        <div class="form-group">
+          <p-password [formControl]="confirmPassword" [toggleMask]="true"></p-password>
+            <small 
+            *ngIf="confirmPassword.invalid && (confirmPassword.dirty || confirmPassword.touched)"
+            class="block p-error"
+            >
+            <div *ngIf="confirmPassword.errors?.['required']">Contraseña es necesario</div>
+            </small>
+            <small 
+              class="block p-error"
+              *ngIf="registerForm.errors?.['passwordMismatch'] && confirmPassword.valid && password.valid"
+            >
+              Contraseña debe coincidir
+            </small>
+        </div>
+        <div class="form-group">
+            <p-button type="submit" [disabled]="registerForm.invalid">Registro</p-button>
+        </div>
+        <div class="mt-2">
+            ¿Ya tienes la cuenta? <a routerLink="/login">Iniciar sesión</a>
+        </div>
+    </form>
+  </p-card>
+  

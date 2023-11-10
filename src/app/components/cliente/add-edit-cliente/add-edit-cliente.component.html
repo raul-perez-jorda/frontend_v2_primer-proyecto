@@ -1,0 +1,57 @@
+<p-dialog header="Datos cliente:" [(visible)]="displayAddModal" [modal]="true" [style]="{ width: '50vw' }"
+    [draggable]="false" [resizable]="false" (onHide)="closeModal()">
+
+    <form [formGroup]="clienteForm">
+        <div class="p-inputgroup" for="nombre">
+            <span class="p-inputgroup-addon">
+                <i class="pi pi-user"></i>
+            </span>
+            <input type="text" pInputText id="nombre" formControlName="nombre" placeholder="Nombre"/>
+            <small 
+                class="p-error block"
+                *ngIf="
+                    clienteForm.controls['nombre'].invalid && 
+                    clienteForm.controls['nombre'].dirty
+                "
+                >Este campo es obligatorio</small>
+        </div>
+        <div class="p-inputgroup" for="email">
+            <span class="p-inputgroup-addon">
+                <i class="pi pi-at"></i>
+            </span>
+            <input type="text" pInputText id="email" formControlName="email" placeholder="Correo electrónico"/>
+        </div>
+        <div *ngIf="modo_editar==false" class="p-inputgroup" for="telefono">
+            <span class="p-inputgroup-addon">#</span>
+            <input type="text" pInputText id="telefono" formControlName="telefono" placeholder="Teléfono" />
+        </div>
+        <div *ngIf="modo_editar==false" class="p-inputgroup" for="descripc_tel">
+            <span class="p-inputgroup-addon">
+                <i class="pi pi-id-card"></i>
+            </span>
+            <input type="text" pInputText id="descripc_tel" formControlName="descripc_tel" placeholder="Descripcion (p.ej. móvil, trabajo, etc.)" />
+        </div>
+    </form>
+
+    <ng-template pTemplate="footer">
+        <p-button 
+            (click)="displayAddModal = false" 
+            label="Volver" 
+            styleClass="p-button-text"
+        ></p-button>
+        <p-button 
+            *ngIf="modo_editar==false"
+            (click)="addCliAndTel()" 
+            label="Añadir" 
+            [disabled]="clienteForm.invalid"
+            styleClass="p-button-text"
+        ></p-button>
+        <p-button 
+            *ngIf="modo_editar==true"
+            (click)="editClient()" 
+            label="Editar" 
+            [disabled]="clienteForm.invalid"
+            styleClass="p-button-text"
+        ></p-button>
+    </ng-template>
+</p-dialog>

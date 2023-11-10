@@ -1,0 +1,257 @@
+<div class="card">
+    <!--Tabla de telefonos-->
+    <p-table [value]="telefonos" [tableStyle]="{ 'width': '95%' }" 
+        selectionMode="single">
+        <ng-template pTemplate="header">
+            <tr>
+                <th>Teléfono</th>
+                <th>Función</th>
+                <th>Consumo</th>
+                <th></th>
+                <th></th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-telefono>
+            <tr style="text-align: center;">
+                <td>{{ telefono.telefono }}</td>
+                <td>{{ telefono.descripc_tel }}</td>
+                <td><p-button label="Ver consumo" severity="warning" size="small" 
+                    (click)="getConsumosTelefono(telefono)"
+                ></p-button></td>
+                <td><p-button icon="pi pi-pencil" severity="success" [text]="true"
+                    (click)="mostrarEditarTelefono(telefono)"
+                ></p-button></td>
+                <td><p-toast></p-toast>
+                    <p-confirmDialog width='50vw'></p-confirmDialog>
+                    <p-button icon="pi pi-trash" severity="danger" [text]="true"
+                    (click)="eliminaTelefono(telefono.id_tel)"
+                ></p-button></td>
+            </tr>
+        </ng-template>
+    </p-table>
+
+    <!--Parte de añadir telefono nuevo-->
+    <p-inplace *ngIf="modo_editar_telefono==false">
+        <ng-template pTemplate="display" >
+            <br>
+            <span >Añadir nueva línea</span>
+        </ng-template>
+        <ng-template pTemplate="content">
+            <form [formGroup]="telefonoForm">
+                <div class="p-inputgroup" for="telefono">
+                    <span class="p-inputgroup-addon">
+                        <i class="pi pi-phone"></i>
+                    </span>
+                    <input type="text" pInputText id="telefono" formControlName="telefono" placeholder="Número teléfono" />
+                    <small 
+                        class="p-error block"
+                        *ngIf="
+                            telefonoForm.controls['telefono'].invalid && 
+                            telefonoForm.controls['telefono'].dirty
+                        "
+                        >Este campo es obligatorio</small>
+                </div>
+                <div class="p-inputgroup" for="descripc_tel">
+                    <span class="p-inputgroup-addon">
+                        <i class="pi pi-info-circle"></i>
+                    </span>
+                    <input type="text" pInputText id="descripc_tel" formControlName="descripc_tel" placeholder="Descripción (p.ej. móvil, profesional)" />
+                </div>
+            </form>
+        
+            <p-button 
+                (click)= "addTelefono()"     
+                icon="pi pi-plus" [text]="true" [rounded]="true" 
+                [disabled]="telefonoForm.invalid" 
+            ></p-button>
+        </ng-template>
+    </p-inplace>    
+
+    <!--Parte de editar un telefono existente-->
+    <div *ngIf="modo_editar_telefono==true">
+        <form [formGroup]="telefonoForm">
+            <div class="p-inputgroup" for="telefono">
+                <span class="p-inputgroup-addon">
+                    <i class="pi pi-phone"></i>
+                </span>
+                <input type="text" pInputText id="telefono" formControlName="telefono" placeholder="Número teléfono" />
+                <small 
+                    class="p-error block"
+                    *ngIf="
+                        telefonoForm.controls['telefono'].invalid && 
+                        telefonoForm.controls['telefono'].dirty
+                    "
+                    >Este campo es obligatorio</small>
+            </div>
+            <div class="p-inputgroup" for="descripc_tel">
+                <span class="p-inputgroup-addon">
+                    <i class="pi pi-info-circle"></i>
+                </span>
+                <input type="text" pInputText id="descripc_tel" formControlName="descripc_tel" placeholder="Descripción (p.ej. móvil, profesional)" />
+            </div>
+        </form>
+    
+        <p-button 
+            (click)= "editarTelefono(true, id_telSelected)"     
+            icon="pi pi-plus" [text]="true" [rounded]="true" 
+            [disabled]="telefonoForm.invalid" 
+        ></p-button>
+        <p-button 
+            (click)= "editarTelefono(false, id_telSelected)"     
+            icon="pi pi-times" [text]="true" [rounded]="true" 
+            [disabled]="telefonoForm.invalid" 
+        ></p-button>
+    </div>
+
+    <!--Pulsas boton de ver consumo cuando ya hay consumos-->
+    <div *ngIf="displayChart==true" class="card">
+        <p-chart id=chartConsumo type="line" [data]="data" [options]="options"></p-chart>
+
+        <p-chart id=chartEstadisticas type="bar" [data]="basicData" [options]="basicOptions"></p-chart>
+
+        <!--Mostrar tabla de consumos-->
+        <p-table id=tablaConsumos [value]="consumos" [tableStyle]="{ 'width': '100%'}"
+            selectionMode="single">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th>Fecha</th>
+                    <th>Consumo</th>
+                    <th></th>
+                    <th></th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-consumo>
+                <tr style="text-align: center;">
+                    <td>{{ convertirFormatoFecha(consumo.fecha) }}</td>
+                    <td>{{ consumo.consumo }}</td>
+                    <td><p-button icon="pi pi-pencil" severity="success" [text]="true"
+                        (click)="mostrarEditarConsumo(consumo)"
+                    ></p-button></td>
+                    <td><p-toast></p-toast>
+                        <p-confirmDialog width='50vw'></p-confirmDialog>
+                        <p-button icon="pi pi-trash" severity="danger" [text]="true"
+                        (click)="eliminaConsumo(consumo.id_consumo)"
+                    ></p-button></td>
+                </tr>
+            </ng-template>
+        </p-table>
+
+        <!--Parte de añadir consumos-->
+        <p-inplace *ngIf="modo_editar_consumo==false">
+            <ng-template pTemplate="display">
+                <br>
+                <span>Añadir consumo nuevo</span>
+            </ng-template>
+            <ng-template pTemplate="content">
+                <span>
+                    <div> 
+                        <h5>Añadir datos consumo:</h5>
+                
+                        <div class="p-inputgroup" for="consumo">
+                            <span class="p-inputgroup-addon">
+                                <i class="pi pi-bolt"></i>
+                            </span>
+                            <input type="number" [(ngModel)]="nuevo_consumo.consumo" placeholder="Consumo" />
+                            <small 
+                                class="p-error block"
+                                *ngIf="
+                                    consumoForm.controls['consumo'].invalid && 
+                                    consumoForm.controls['consumo'].dirty
+                                "
+                            >Este campo es obligatorio</small>
+                        </div>
+                        <div class="p-inputgroup">
+                            <span class="p-inputgroup-addon">
+                                <i class="pi pi-calendar"></i>
+                            </span>
+                            <p-calendar [(ngModel)]="inputNuevaFecha" type="date" view="month" dateFormat="mm/yy" [readonlyInput]="true"></p-calendar>
+                        </div>
+                
+                        <p-button 
+                            (click) = addConsumo(inputNuevaFecha,id_telSelected)
+                            icon="pi pi-plus" [text]="true" [rounded]="true" 
+                            [disabled]="consumoForm.invalid" 
+                        ></p-button>
+                    </div>
+                </span>
+            </ng-template>
+        </p-inplace>
+        <!--Parte de editar consumo-->
+        <div *ngIf="modo_editar_consumo"> 
+            <h5>Editar datos consumo:</h5>
+    
+            <div class="p-inputgroup" for="consumo">
+                <span class="p-inputgroup-addon">
+                    <i class="pi pi-bolt"></i>
+                </span>
+                <input type="number" [(ngModel)]="nuevo_consumo.consumo" placeholder="Consumo" />
+                <small 
+                    class="p-error block"
+                    *ngIf="
+                        consumoForm.controls['consumo'].invalid && 
+                        consumoForm.controls['consumo'].dirty
+                    "
+                >Este campo es obligatorio</small>
+            </div>
+            <div class="p-inputgroup">
+                <span class="p-inputgroup-addon">
+                    <i class="pi pi-calendar"></i>
+                </span>
+                <p-calendar [(ngModel)]="inputNuevaFecha" type="date" view="month" dateFormat="mm/yy" [readonlyInput]="true"></p-calendar>
+            </div>
+    
+            <p-button 
+            (click)= "editarConsumo(true,id_consumoSelected,id_telSelected,inputNuevaFecha)"     
+            icon="pi pi-plus" [text]="true" [rounded]="true" 
+            [disabled]="consumoForm.invalid" 
+        ></p-button>
+        <p-button 
+            (click)= "editarConsumo(true,id_consumoSelected,id_telSelected,inputNuevaFecha)"     
+            icon="pi pi-times" [text]="true" [rounded]="true" 
+            [disabled]="consumoForm.invalid" 
+        ></p-button>
+        </div>
+    <br>
+    <p-button label="Exportar a pdf" 
+        severity="danger" size="small" icon="pi pi-file-pdf"
+        (onClick) = generarPDF(true,telefonoSelected.telefono)
+    ></p-button>
+    <p-toast></p-toast>
+    <p-button label="Enviar pdf al email del cliente" 
+        severity="secondary" size="small" icon="pi pi-share-alt"
+        (onClick)=enviarConsumosCorreo(this.clienteSelected,telefonoSelected.telefono)
+    ></p-button>
+    </div>
+    <!--Pulsas boton de ver consumo cuando NO hay consumos-->
+    <div *ngIf="aun_vacio==true" class="card">
+        <div> 
+            <h4>Añadir datos consumo:</h4>
+    
+            <div class="p-inputgroup">
+                <span class="p-inputgroup-addon">
+                    <i class="pi pi-bolt"></i>
+                </span>
+                <input type="number" [(ngModel)]="nuevo_consumo.consumo" placeholder="Consumo" />
+                <small 
+                    class="p-error block"
+                    *ngIf="
+                        consumoForm.controls['consumo'].invalid && 
+                        consumoForm.controls['consumo'].dirty
+                    "
+                >Este campo es obligatorio</small>
+            </div>
+            <div class="p-inputgroup">
+                <span class="p-inputgroup-addon">
+                    <i class="pi pi-calendar"></i>
+                </span>
+                <p-calendar [(ngModel)]="inputNuevaFecha" type="date" view="month" dateFormat="mm/yy"></p-calendar>
+            </div>
+    
+            <p-button 
+                (click) = addConsumo(inputNuevaFecha,id_telSelected)
+                icon="pi pi-plus" [text]="true" [rounded]="true" 
+                [disabled]="consumoForm.invalid" 
+            ></p-button>
+        </div>
+    </div>
+</div>

@@ -1,8 +1,8 @@
 import { Component, EventEmitter, Input, OnChanges, Output, SimpleChange, SimpleChanges } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import { ClienteService } from '../cliente.service';
-import { RespuestaCliente, Cliente } from '../cliente';
-import { NuevoTelefono } from '../telefono/telefono';
+import { ClienteService } from '../../../services/cliente.service';
+import { RespuestaCliente, Cliente } from '../../../interfaces/cliente';
+import { NuevoTelefono } from '../../../interfaces/telefono';
 
 @Component({
   selector: 'app-add-edit-cliente',

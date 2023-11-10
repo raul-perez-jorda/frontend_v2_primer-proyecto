@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { EmailService } from './email.service';
+import { EmailService } from '../../../services/email.service';
 
 @Component({
   selector: 'app-email',

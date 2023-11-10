@@ -1,9 +1,9 @@
 import { Component, Input, OnInit, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import { TelefonoService } from './telefono.service';
-import { EmailService } from '../email/email.service';
-import { ClienteService } from '../cliente.service';
-import { Telefono, Consumo, NuevoTelefono, NuevoConsumo, Estadisticas, DatosCorreo } from './telefono';
+import { TelefonoService } from '../../../services/telefono.service';
+import { EmailService } from '../../../services/email.service';
+import { ClienteService } from '../../../services/cliente.service';
+import { Telefono, Consumo, NuevoTelefono, NuevoConsumo, Estadisticas, DatosCorreo } from '../../../interfaces/telefono';
 
 import { ConfirmationService, MessageService, ConfirmEventType } from 'primeng/api';
 
@@ -489,6 +489,8 @@ export class TelefonoComponent implements OnInit, AfterViewInit {
     this.clienteService.getCliente(clienteSelected).subscribe(
       responseEmail => {
         this.datos_correo.destinatario = responseEmail[0].email;
+        
+        this.messageService.add({ severity: 'info', summary: 'Enviando...', detail: 'Redactando email' })
 
         this.generarPDF(true, num_telefono)
           .then(() => {

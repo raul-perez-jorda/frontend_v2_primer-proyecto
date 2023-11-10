@@ -1,0 +1,33 @@
+<!--Parte superior con título y botón de cerrar sesión-->
+<div class="flex justify-content-between">
+    <h2>Datos cliente</h2>
+    <p-button label="Cerrar sesión" size="small" severity="danger" (click)="logOut()"></p-button>
+</div>
+
+<p-fieldset>
+    <ng-template pTemplate="header">
+        <div class="flex align-items-center text-primary">
+            <span class="pi pi-user mr-2"></span>
+            <span class="font-bold text-lg">{{ clienteSelected.nombre }}</span>
+        </div>
+    </ng-template>
+    <div class="user-panel">
+        <div class="panel-item">
+            Id.: {{ clienteSelected.id_cli }}
+        </div>
+        <br>
+        <div class="panel-item">
+          Correo electrónico: {{ clienteSelected.email }}
+        </div>
+        <br>
+        <div class="panel-item">
+          Usuario: (cargando...)
+        </div>
+        <br>
+        <button pButton type="button" severity="success" label="Editar datos" (click)="editClient(clienteSelected)"></button>
+      </div>
+</p-fieldset>
+
+<!--Tabla con sus telefonos-->
+<app-telefono *ngIf="displayTelefonos" [id_cliSelected]="this.id_cliSelected"></app-telefono>
+    

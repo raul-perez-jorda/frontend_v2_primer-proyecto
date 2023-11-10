@@ -1,6 +1,7 @@
 <div class="flex justify-content-between">
     <h2>Clientes</h2>
     <p-button label="Añadir cliente" (click)="showAddModal()"></p-button>
+    <p-button label="Cerrar sesión" severity="danger" (click)="logOut()"></p-button>
 </div>
 
 <div class="card">
@@ -59,3 +60,4 @@
         <p-button (click)="displayTelefonos = false" label="Volver" styleClass="p-button-text"></p-button>
     </ng-template>
 </p-dialog>
+

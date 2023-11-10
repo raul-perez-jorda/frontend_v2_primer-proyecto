@@ -10,6 +10,8 @@ import { InputTextModule } from 'primeng/inputtext';
 import { ChartModule } from 'primeng/chart';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ToastModule } from 'primeng/toast';
+import { FieldsetModule } from 'primeng/fieldset';
+import { DataViewModule } from 'primeng/dataview';
 
 import { ClienteComponent } from './cliente.component';
 import { AddEditClienteModule } from './add-edit-cliente/add-edit-cliente.module';
@@ -33,7 +35,9 @@ import { EmailComponent } from './email/email.component';
     TelefonoModule,
     ChartModule,
     ConfirmDialogModule,
-    ToastModule
+    ToastModule,
+    FieldsetModule,
+    DataViewModule
     ],
   exports: [
     ClienteComponent,

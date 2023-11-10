@@ -1,0 +1,27 @@
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #f0f0f0; /* Color gris claro de fondo */
+}
+
+.login-card {
+  width: 360px; /* Ajusta el ancho según tus preferencias */
+  text-align: center; /* Centra el contenido dentro de la tarjeta */
+}
+
+.custom-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+/* Agrega estilos para los mensajes de error */
+.error-message {
+  color: red;
+  margin-top: 5px;
+}

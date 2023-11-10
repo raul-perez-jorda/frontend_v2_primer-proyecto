@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
 import { Observable } from 'rxjs';
-import { Cliente, RespuestaCliente } from './cliente';
+import { Cliente, RespuestaCliente } from '../interfaces/cliente';
 import { ThisReceiver, parseHostBindings } from '@angular/compiler';
 
 
