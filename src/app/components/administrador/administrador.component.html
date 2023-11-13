@@ -12,6 +12,7 @@
             <tr>
                 <th pSortableColumn="id_cli">Id.<p-sortIcon field="code"></p-sortIcon></th>
                 <th pSortableColumn="nombre">Nombre<p-sortIcon field="code"></p-sortIcon></th>
+                <th pSortableColumn="user">Usuario<p-sortIcon field="code"></p-sortIcon></th>
                 <th pSortableColumn="email">Correo electrónico<p-sortIcon field="code"></p-sortIcon></th>
                 <th>Teléfono</th>
                 <th></th>
@@ -22,6 +23,7 @@
             <tr style="text-align: center;">
                 <td>{{ cliente.id_cli }}</td>
                 <td>{{ cliente.nombre }}</td>
+                <td>{{ cliente.user }}</td>
                 <td>{{ cliente.email }}</td>
                 <td><p-button label="Ver teléfonos" size="small" 
                     (click)="showTelefonos(cliente.id_cli)"

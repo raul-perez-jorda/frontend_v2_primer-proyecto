@@ -7,6 +7,7 @@ import { MessageService } from 'primeng/api';
 import { AuthService } from 'src/app/services/auth.service';
 import { Log } from 'src/app/interfaces/log';
 import { LogsService } from 'src/app/services/logs.service';
+import * as moment from 'moment-timezone';
 
 @Component({
   selector: 'app-login',
@@ -59,10 +60,9 @@ export class LoginComponent {
 
       this.loginService.login(formData).subscribe(
         responseGet => {
-          if (responseGet.length !== 0 && responseGet.error ==false) { // Log valido
+          if (responseGet.length !== 0 && responseGet.error =='false') { // Log valido
             
             this.logDetails.log_valido = true;
-            console.log(this.logDetails)
 
             this.logsService.addLog(this.logDetails).subscribe(
               responseLog => {
@@ -70,14 +70,12 @@ export class LoginComponent {
 
                 // Creo el token, lo envio, lo decodifico y lo uso para saber las credenciales del log
                 this.token = responseGet.token;
-                console.log('Tu token es: ' + this.token);
 
                 this.loginService.setToken(this.token);
 
                 this.authService.decodeToken(this.token).subscribe(
                   response => {
                     this.info_user = response;
-                    console.log(this.info_user)
           
                     if(this.info_user.id_rol==1) {
                       this.router.navigate(['/administrador'])
@@ -93,20 +91,20 @@ export class LoginComponent {
               }
             )
 
-          } else if (responseGet.error == true) { // Intento inicio de sesión fallido
+          } else if (responseGet.error == 'inv_pass') { // Intento inicio de sesión fallido
             console.log('Credenciales no coinciden');
 
             this.logDetails.log_valido = false;
-            console.log(this.logDetails)
 
             this.logsService.addLog(this.logDetails).subscribe(
               responseLog => {
-                console.log('Log erroneo añadido correctamente.')
                 this.messageService.add({ severity: 'error', summary: 'Fallo al iniciar sesión'})
               },
               errorLog => {
                 console.log('Log erroneo no se ha podido anotar')
               })
+          } else if (responseGet.error == 'blocked_ip') {
+            console.log('Inicio de sesión bloqueado por 1 minutos');
           }
         },
         errorGet => {
@@ -119,13 +117,11 @@ export class LoginComponent {
   }
 
   private formatDate(date: Date): string {
-    const year = date.getFullYear();
-    const month = ('0' + (date.getMonth() + 1)).slice(-2); // Agrega un cero al principio si es necesario
-    const day = ('0' + date.getDate()).slice(-2);
-    const hours = ('0' + date.getHours()).slice(-2);
-    const minutes = ('0' + date.getMinutes()).slice(-2);
-    const seconds = ('0' + date.getSeconds()).slice(-2);
-  
-    return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+    const momentDate = moment(date);
+    const timeZone = 'Europe/Madrid';
+
+    const formattedDate = momentDate.tz(timeZone).format('YYYY-MM-DD HH:mm:ss');
+
+    return formattedDate;
   }
 }

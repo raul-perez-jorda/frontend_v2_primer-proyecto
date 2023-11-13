@@ -6,6 +6,7 @@ import { AdministradorModule } from './administrador.module';
 import { ConfirmationService, MessageService, ConfirmEventType } from 'primeng/api';
 import { Router } from '@angular/router';
 import { LoginService } from 'src/app/services/login.service';
+import { AuthService } from 'src/app/services/auth.service';
 
 @Component({
   selector: 'app-administrador',
@@ -19,23 +20,43 @@ export class AdministradorComponent {
     id_cli: 0,
     nombre: '',
     email: '',
-
+    user: ''
   };
   displayAddModal = false;
   displayTelefonos = false;
   modo_editar = false;
   id_cliSelected!: number;
 
-  token!: any;
+  token!: string;
+  newToken !: string;
+  info_user !: any;
   
   constructor(private clienteService: ClienteService, 
               private confirmationService: ConfirmationService, 
               private messageService: MessageService,
               private router: Router,
-              private loginService: LoginService) { }
+              private loginService: LoginService,
+              private authService: AuthService) { }
 
-  ngOnInit(): void {
-    this.getClienteList();
+  ngDoCheck(): void {
+    this.newToken = this.loginService.getToken();
+
+    if (this.newToken!==this.token) {
+      this.token = this.newToken;
+
+      this.authService.decodeToken(this.token).subscribe(
+        response => {
+          this.info_user = response;
+
+          if(this.info_user.id_rol == 1) {
+            this.getClienteList()
+          }
+          else {
+            this.router.navigate(['/login'])
+          }
+        }
+      )
+    }
 
   }
 
@@ -49,7 +70,7 @@ export class AdministradorComponent {
 
   logOut() {
     this.router.navigate(['/login']);
-    this.token = undefined;
+    this.token = '';
     this.loginService.setToken(this.token);
   }
 

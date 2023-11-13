@@ -1,4 +1,4 @@
-import { Component, DoCheck } from '@angular/core';
+import { Component, DoCheck, OnInit } from '@angular/core';
 import { ClienteService } from '../../services/cliente.service';
 import { Cliente } from '../../interfaces/cliente';
 
@@ -20,7 +20,7 @@ export class ClienteComponent implements DoCheck {
     id_cli: 0,
     nombre: '',
     email: '',
-
+    user: ''
   };
   displayAddModal = false;
   displayTelefonos = false;
@@ -40,7 +40,7 @@ export class ClienteComponent implements DoCheck {
   ngDoCheck(): void {
     this.newToken = this.loginService.getToken();
 
-    if(this.newToken!==this.token){
+    if (this.newToken!==this.token) {
       this.token = this.newToken;
 
       this.authService.decodeToken(this.token).subscribe(
@@ -50,10 +50,9 @@ export class ClienteComponent implements DoCheck {
           this.id_cliSelected = this.info_user.id_cli;
           this.getCliente(this.id_cliSelected);
           this.displayTelefonos=true;
+
         }
       )
-
-      
     }
 
   }

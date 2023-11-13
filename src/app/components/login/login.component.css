@@ -1,26 +1,18 @@
-.login-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  background-color: #f0f0f0; /* Color gris claro de fondo */
-}
-
-.login-card {
-  width: 360px; /* Ajusta el ancho según tus preferencias */
-  text-align: center; /* Centra el contenido dentro de la tarjeta */
-}
-
 .custom-form {
-  display: flex;
-  flex-direction: column;
+  max-width: 310px; /* Establece el ancho máximo del formulario */
+  margin: 0 auto; /* Centra el formulario horizontalmente */
+  padding: 15px; /* Añade un relleno interno para darle grosor al formulario */
 }
 
 .form-group {
-  margin-bottom: 15px;
+  margin-bottom: 15px; /* Ajusta la separación entre grupos de campos */
 }
 
-/* Agrega estilos para los mensajes de error */
+label {
+  display: block;
+  margin-bottom: 5px; /* Ajusta la separación entre etiqueta y campo */
+}
+
 .error-message {
   color: red;
   margin-top: 5px;
