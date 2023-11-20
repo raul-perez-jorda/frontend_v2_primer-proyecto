@@ -1,0 +1,100 @@
+<p-card header="Datos meteorológicos" class="login-card"
+[style]="{width: '400px', margin:'50px auto'}">
+  <div class="form-group">
+    <b>Nombre municipio: </b>
+    <input
+    type="text" 
+    pInputText class="form-control" 
+    [(ngModel)]="nombre_munic" 
+    />
+  </div>
+  <p-button label="Actualizar datos existentes" [outlined]="true" (click)="ActualizarDatosMeteorologicos(nombre_munic)"></p-button>
+
+  <br>
+  <br>
+  <div>
+    <b>Codigo municipio: {{id_municipioSelected}}</b>
+  </div>
+  <br>
+  <p-button label="Obtener datos DB" [outlined]="true" severity="success" (click)="ObtenerDatosMeteo(id_municipioSelected)"></p-button>
+</p-card>
+
+<!--Visualización de datos meteorológicos-->
+<div *ngIf="showDatosMeteo">
+  <div class="city-name">Tiempo en {{this.nombre_municSelected}}</div>
+
+  <div class="card-container">
+    <div class="weather-card">
+      <div class="card-title">Hoy</div>
+      <table class="weather-table">
+        <tr>
+          <td>
+            <i class="pi pi-arrow-up"></i>
+            max. {{this.datos_meteo_para_representar.temp_maximas[0].valor}} º
+          </td>
+          <td>{{this.datos_meteo_para_representar.estados_Cielo[0].descripcion}}</td>
+        </tr>
+        <tr>
+          <td>
+            <i class="pi pi-arrow-down"></i>
+            min. {{this.datos_meteo_para_representar.temp_minimas[0].valor}} º
+          </td>
+          <td>
+            <i class="pi pi-cloud-download"></i>
+            {{this.datos_meteo_para_representar.probPrecipitacion[0].valor}} %
+          </td>
+        </tr>
+      </table>
+    </div>
+
+    <div class="weather-card">
+      <div class="card-title">Mañana</div>
+      <table class="weather-table">
+        <tr>
+          <td>
+            <i class="pi pi-arrow-up"></i>
+            max. {{this.datos_meteo_para_representar.temp_maximas[1].valor}} º
+          </td>
+          <td>{{this.datos_meteo_para_representar.estados_Cielo[1].descripcion}}</td>
+        </tr>
+        <tr>
+          <td>
+            <i class="pi pi-arrow-down"></i>
+            min. {{this.datos_meteo_para_representar.temp_minimas[1].valor}} º
+          </td>
+          <td>
+            <i class="pi pi-cloud-download"></i>
+            {{this.datos_meteo_para_representar.probPrecipitacion[1].valor}} %
+          </td>
+        </tr>
+      </table>
+    </div>
+
+    <div class="weather-card">
+      <div class="card-title">Pasado</div>
+      <table class="weather-table">
+        <tr>
+          <td>
+            <i class="pi pi-arrow-up"></i>
+            max. {{this.datos_meteo_para_representar.temp_maximas[2].valor}} º
+          </td>
+          <td>{{this.datos_meteo_para_representar.estados_Cielo[2].descripcion}}</td>
+        </tr>
+        <tr>
+          <td>
+            <i class="pi pi-arrow-down"></i>
+            min. {{this.datos_meteo_para_representar.temp_minimas[2].valor}} º
+          </td>
+          <td>
+            <i class="pi pi-cloud-download"></i>
+            {{this.datos_meteo_para_representar.probPrecipitacion[2].valor}} %
+          </td>
+        </tr>
+      </table>
+    </div>
+  </div>
+  <div class="card" >
+    <div class="card-title">Evolución temperaturas hoy:</div>
+    <p-chart type="line" [data]="this.data" [options]="this.options"></p-chart>
+</div>
+</div>

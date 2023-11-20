@@ -1,0 +1,36 @@
+<div>
+    <div class="flex justify-content-between">
+        <h2>Logs</h2>
+        <p-button label="Vista clientes" severity="warning" (click)="goClientesList()"></p-button>
+    </div>
+    
+    <div class="card">
+        <p-table 
+        [value]="logs" [tableStyle]="{ 'min-width': '50rem' }" 
+        [paginator]="false" [rows]="8">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th pSortableColumn="id_log">Id log<p-sortIcon field="code"></p-sortIcon></th>
+                    <th pSortableColumn="direccion_ip">Dirección IP<p-sortIcon field="code"></p-sortIcon></th>
+                    <th pSortableColumn="log_valido">Tipo log<p-sortIcon field="code"></p-sortIcon></th>
+                    <th pSortableColumn="user">Usuario<p-sortIcon field="code"></p-sortIcon></th>
+                    <th pSortableColumn="fecha">Fecha<p-sortIcon field="code"></p-sortIcon></th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-log>
+                <tr style="text-align: center;">
+                    <td>{{ log.id_log }}</td>
+                    <td>{{ log.direccion_ip }}</td>
+                    <td>{{ log.log_valido.data }}</td>
+                    <td>{{ log.user }}</td>
+                    <td>{{ log.fecha }}</td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+    
+
+    
+</div>
+
+

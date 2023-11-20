@@ -1,11 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Login } from '../../interfaces/login';
-import { LoginService } from '../../services/login.service';
+import { Login } from '../../interfaces/users';
 import { Router } from '@angular/router';
 import { MessageService } from 'primeng/api';
 import { AuthService } from 'src/app/services/auth.service';
-import { Log } from 'src/app/interfaces/log';
+import { Log, newLog } from 'src/app/interfaces/log';
 import { LogsService } from 'src/app/services/logs.service';
 import * as moment from 'moment-timezone';
 
@@ -14,7 +13,7 @@ import * as moment from 'moment-timezone';
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
 })
-export class LoginComponent {
+export class LoginComponent{
 
   loginForm = this.fb.group({
     user: ['', Validators.required], // Validador de requerido
@@ -25,11 +24,10 @@ export class LoginComponent {
   rolSelected!: number;
   token!: string;
   info_user!: any;
-  logDetails!: Log;
+  logDetails!: newLog;
 
   constructor(
     private fb: FormBuilder,
-    private loginService: LoginService,
     private router: Router,
     private messageService: MessageService,
     private authService: AuthService,
@@ -58,7 +56,7 @@ export class LoginComponent {
         fecha: fecha_formateada
       }
 
-      this.loginService.login(formData).subscribe(
+      this.authService.login(formData).subscribe(
         responseGet => {
           if (responseGet.length !== 0 && responseGet.error =='false') { // Log valido
             
@@ -71,7 +69,7 @@ export class LoginComponent {
                 // Creo el token, lo envio, lo decodifico y lo uso para saber las credenciales del log
                 this.token = responseGet.token;
 
-                this.loginService.setToken(this.token);
+                this.authService.setToken(this.token);
 
                 this.authService.decodeToken(this.token).subscribe(
                   response => {
@@ -98,13 +96,14 @@ export class LoginComponent {
 
             this.logsService.addLog(this.logDetails).subscribe(
               responseLog => {
-                this.messageService.add({ severity: 'error', summary: 'Fallo al iniciar sesión'})
+                this.messageService.add({ severity: 'error', summary: 'Usuario y contraseña no coinciden'})
               },
               errorLog => {
                 console.log('Log erroneo no se ha podido anotar')
               })
           } else if (responseGet.error == 'blocked_ip') {
             console.log('Inicio de sesión bloqueado por 1 minutos');
+            this.messageService.add({ severity: 'error', summary: 'Inicio de sesión bloqueado durante 1 minuto'})
           }
         },
         errorGet => {

@@ -5,7 +5,6 @@ import { AdministradorModule } from './administrador.module';
 
 import { ConfirmationService, MessageService, ConfirmEventType } from 'primeng/api';
 import { Router } from '@angular/router';
-import { LoginService } from 'src/app/services/login.service';
 import { AuthService } from 'src/app/services/auth.service';
 
 @Component({
@@ -25,6 +24,7 @@ export class AdministradorComponent {
   displayAddModal = false;
   displayTelefonos = false;
   modo_editar = false;
+  tengo_permiso = false;
   id_cliSelected!: number;
 
   token!: string;
@@ -35,11 +35,10 @@ export class AdministradorComponent {
               private confirmationService: ConfirmationService, 
               private messageService: MessageService,
               private router: Router,
-              private loginService: LoginService,
               private authService: AuthService) { }
 
   ngDoCheck(): void {
-    this.newToken = this.loginService.getToken();
+    this.newToken = this.authService.getToken();
 
     if (this.newToken!==this.token) {
       this.token = this.newToken;
@@ -50,8 +49,10 @@ export class AdministradorComponent {
 
           if(this.info_user.id_rol == 1) {
             this.getClienteList()
+            this.tengo_permiso = true;
           }
           else {
+            this.tengo_permiso = false;
             this.router.navigate(['/login'])
           }
         }
@@ -68,10 +69,14 @@ export class AdministradorComponent {
     )
   }
 
+  goToLogs() {
+    this.router.navigate(['/logs'])
+  }
+
   logOut() {
     this.router.navigate(['/login']);
     this.token = '';
-    this.loginService.setToken(this.token);
+    this.authService.setToken(this.token);
   }
 
   showAddModal() {

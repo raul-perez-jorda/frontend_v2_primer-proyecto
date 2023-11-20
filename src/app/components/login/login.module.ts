@@ -10,9 +10,6 @@ import { CardModule } from 'primeng/card';
 import { LoginComponent } from './login.component';
 import { PasswordModule } from 'primeng/password';
 
-
-
-
 @NgModule({
   declarations: [
     LoginComponent

@@ -3,7 +3,6 @@ import { ClienteService } from '../../services/cliente.service';
 import { Cliente } from '../../interfaces/cliente';
 
 import { ConfirmationService, MessageService, ConfirmEventType } from 'primeng/api';
-import { LoginService } from 'src/app/services/login.service';
 import { Router } from '@angular/router';
 import { AuthService } from 'src/app/services/auth.service';
 
@@ -34,11 +33,10 @@ export class ClienteComponent implements DoCheck {
   constructor(private clienteService: ClienteService, 
     private authService: AuthService, 
     private messageService: MessageService,
-    private loginService: LoginService,
     private router: Router) { }
 
   ngDoCheck(): void {
-    this.newToken = this.loginService.getToken();
+    this.newToken = this.authService.getToken();
 
     if (this.newToken!==this.token) {
       this.token = this.newToken;
@@ -68,7 +66,7 @@ export class ClienteComponent implements DoCheck {
   logOut() {
     this.router.navigate(['/login']);
     this.token = '';
-    this.loginService.setToken(this.token);
+    this.authService.setToken(this.token);
   }
 
   showTelefonos( id_cli: number ) {

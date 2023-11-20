@@ -8,7 +8,7 @@ import { CardModule } from 'primeng/card';
 import { ButtonModule } from 'primeng/button';
 import { passwordMatchValidator } from 'src/app/shared/password-match.directive';
 import { AuthService } from 'src/app/services/auth.service';
-import { User } from 'src/app/interfaces/auth';
+import { User } from 'src/app/interfaces/users';
 import { MessageService } from 'primeng/api';
 import { Router } from '@angular/router';
 

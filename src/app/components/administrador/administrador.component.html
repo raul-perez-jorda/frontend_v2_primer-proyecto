@@ -1,65 +1,69 @@
-<div class="flex justify-content-between">
-    <h2>Clientes</h2>
-    <p-button label="Añadir cliente" (click)="showAddModal()"></p-button>
-    <p-button label="Cerrar sesión" severity="danger" (click)="logOut()"></p-button>
+<div *ngIf="this.tengo_permiso">
+    <div class="flex justify-content-between">
+        <h2>Clientes</h2>
+        <p-button label="Añadir cliente" (click)="showAddModal()"></p-button>
+        <p-button label="Gestión logs" severity="help" (click)="goToLogs()"></p-button>
+        <p-button label="Cerrar sesión" severity="danger" (click)="logOut()"></p-button>
+    </div>
+    
+    <div class="card">
+        <p-table 
+        [value]="clientes" [tableStyle]="{ 'min-width': '50rem' }" 
+        [paginator]="false" [rows]="8">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th pSortableColumn="id_cli">Id.<p-sortIcon field="code"></p-sortIcon></th>
+                    <th pSortableColumn="nombre">Nombre<p-sortIcon field="code"></p-sortIcon></th>
+                    <th pSortableColumn="user">Usuario<p-sortIcon field="code"></p-sortIcon></th>
+                    <th pSortableColumn="email">Correo electrónico<p-sortIcon field="code"></p-sortIcon></th>
+                    <th>Teléfono</th>
+                    <th></th>
+                    <th></th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-cliente>
+                <tr style="text-align: center;">
+                    <td>{{ cliente.id_cli }}</td>
+                    <td>{{ cliente.nombre }}</td>
+                    <td>{{ cliente.user }}</td>
+                    <td>{{ cliente.email }}</td>
+                    <td><p-button label="Ver teléfonos" size="small" 
+                        (click)="showTelefonos(cliente.id_cli)"
+                    ></p-button></td>
+                    <td><p-button icon="pi pi-pencil" severity="success" [text]="true"
+                        (click)="editClient(cliente)"
+                    ></p-button></td>
+                    <td><p-toast></p-toast>
+                        <p-confirmDialog [style]="{width: '50vw'}"></p-confirmDialog>
+                        <p-button icon="pi pi-trash" severity="danger" [text]="true"
+                        (click)="deleteClient(cliente.id_cli)"
+                    ></p-button></td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+    
+    <app-add-edit-cliente 
+        [displayAddModal]="displayAddModal"
+        [modo_editar]="modo_editar"
+        [clienteSelected]="clienteSelected"
+        (clickClose) = "hideAddModal($event)"
+    ></app-add-edit-cliente>
+    
+    <p-dialog 
+        header="" 
+        [(visible)]="displayTelefonos" 
+        [modal]="true" 
+        [style]="{ width: '85%' }" 
+        [draggable]="false" 
+        [resizable]="false">
+        <p class="m-0">
+            <app-telefono *ngIf="displayTelefonos" [id_cliSelected]="this.id_cliSelected"></app-telefono>
+        </p>
+        <ng-template pTemplate="footer">
+            <p-button (click)="displayTelefonos = false" label="Volver" styleClass="p-button-text"></p-button>
+        </ng-template>
+    </p-dialog>    
 </div>
 
-<div class="card">
-    <p-table 
-    [value]="clientes" [tableStyle]="{ 'min-width': '50rem' }" 
-    [paginator]="false" [rows]="8">
-        <ng-template pTemplate="header">
-            <tr>
-                <th pSortableColumn="id_cli">Id.<p-sortIcon field="code"></p-sortIcon></th>
-                <th pSortableColumn="nombre">Nombre<p-sortIcon field="code"></p-sortIcon></th>
-                <th pSortableColumn="user">Usuario<p-sortIcon field="code"></p-sortIcon></th>
-                <th pSortableColumn="email">Correo electrónico<p-sortIcon field="code"></p-sortIcon></th>
-                <th>Teléfono</th>
-                <th></th>
-                <th></th>
-            </tr>
-        </ng-template>
-        <ng-template pTemplate="body" let-cliente>
-            <tr style="text-align: center;">
-                <td>{{ cliente.id_cli }}</td>
-                <td>{{ cliente.nombre }}</td>
-                <td>{{ cliente.user }}</td>
-                <td>{{ cliente.email }}</td>
-                <td><p-button label="Ver teléfonos" size="small" 
-                    (click)="showTelefonos(cliente.id_cli)"
-                ></p-button></td>
-                <td><p-button icon="pi pi-pencil" severity="success" [text]="true"
-                    (click)="editClient(cliente)"
-                ></p-button></td>
-                <td><p-toast></p-toast>
-                    <p-confirmDialog [style]="{width: '50vw'}"></p-confirmDialog>
-                    <p-button icon="pi pi-trash" severity="danger" [text]="true"
-                    (click)="deleteClient(cliente.id_cli)"
-                ></p-button></td>
-            </tr>
-        </ng-template>
-    </p-table>
-</div>
-
-<app-add-edit-cliente 
-    [displayAddModal]="displayAddModal"
-    [modo_editar]="modo_editar"
-    [clienteSelected]="clienteSelected"
-    (clickClose) = "hideAddModal($event)"
-></app-add-edit-cliente>
-
-<p-dialog 
-    header="" 
-    [(visible)]="displayTelefonos" 
-    [modal]="true" 
-    [style]="{ width: '85%' }" 
-    [draggable]="false" 
-    [resizable]="false">
-    <p class="m-0">
-        <app-telefono *ngIf="displayTelefonos" [id_cliSelected]="this.id_cliSelected"></app-telefono>
-    </p>
-    <ng-template pTemplate="footer">
-        <p-button (click)="displayTelefonos = false" label="Volver" styleClass="p-button-text"></p-button>
-    </ng-template>
-</p-dialog>
 

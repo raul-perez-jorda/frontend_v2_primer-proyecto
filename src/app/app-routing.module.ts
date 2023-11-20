@@ -4,6 +4,9 @@ import { LoginComponent } from './components/login/login.component';
 import { RegisterComponent } from './components/register/register.component';
 import { ClienteComponent } from './components/cliente/cliente.component';
 import { AdministradorComponent } from './components/administrador/administrador.component';
+import { LogsComponent } from './components/logs/logs.component';
+import { administradorGuard } from './guards/administrador.guard';
+import { MeteorologiaComponent } from './components/meteorologia/meteorologia.component';
 
 const routes: Routes = [
   {
@@ -16,11 +19,20 @@ const routes: Routes = [
   },
   {
     path: 'administrador',
-    component: AdministradorComponent
+    component: AdministradorComponent,
+    canActivate: [administradorGuard] 
   },
   {
     path: 'cliente',
     component: ClienteComponent
+  },
+  {
+    path: 'logs',
+    component: LogsComponent
+  },
+  {
+    path: 'meteo',
+    component: MeteorologiaComponent
   },
   {
     path: '', redirectTo: 'login', pathMatch: 'full'

@@ -1,5 +1,3 @@
-import jsPDF from "jspdf";
-
 export interface Telefono {
     id_tel: number;
     telefono: string;
