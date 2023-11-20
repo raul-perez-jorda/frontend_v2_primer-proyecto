@@ -107,32 +107,37 @@ export class MeteorologiaComponent implements OnInit{
   }
 
   // Función que obtiene los datos y los representa
-  ObtenerDatosMeteo(id_municipioSelected: string) {
-    this.meteorologiaService.getMeteoDataDB(id_municipioSelected).subscribe(
+  ObtenerDatosMeteo(nombre_munic: string) {
+    this.meteorologiaService.getCodigoMunicipio(nombre_munic).subscribe( // Get el codigo del municipio
       response => {
-        this.datos_meteo_para_representar = response;
-        this.messageService.add({ severity: 'success', summary: 'Datos obtenidos correctamente'})
-        this.showDatosMeteo = true;
+        this.id_municipioSelected = response[0].id_municipio;
+        this.nombre_municSelected = response[0].nombre_municipio;
 
-        //console.log(this.datos_meteo_para_representar)
-
-        const arrayTemperaturasHorariasHoy: number[] = this.datos_meteo_para_representar.temp_horas_hoy.map(item=>item.valor)
-        console.log(arrayTemperaturasHorariasHoy)
-
-        this.data = {
-            labels: ['6:00', '12:00', '18:00', '24:00'],
-            datasets: [
-                {
-                    data: arrayTemperaturasHorariasHoy,
-                    fill: true,
-                    borderColor: this.documentStyle.getPropertyValue('--blue-500'),
-                    tension: 0.2
-                }
-            ]
-        };
-        console.log(this.data)
+        this.meteorologiaService.getMeteoDataDB(this.id_municipioSelected).subscribe(
+          response => {
+            this.datos_meteo_para_representar = response;
+            this.messageService.add({ severity: 'success', summary: 'Datos obtenidos correctamente'})
+            this.showDatosMeteo = true;
+        
+            const arrayTemperaturasHorariasHoy: number[] = this.datos_meteo_para_representar.temp_horas_hoy.map(item=>item.valor)
+            console.log(arrayTemperaturasHorariasHoy)
+    
+            this.data = {
+                labels: ['6:00', '12:00', '18:00', '24:00'],
+                datasets: [
+                    {
+                        data: arrayTemperaturasHorariasHoy,
+                        fill: true,
+                        borderColor: this.documentStyle.getPropertyValue('--blue-500'),
+                        tension: 0.2
+                    }
+                ]
+            };
+            console.log(this.data)
+          }
+        )
       }
-    )
+    )   
   }
 }
 

@@ -8,15 +8,12 @@
     [(ngModel)]="nombre_munic" 
     />
   </div>
-  <p-button label="Actualizar datos existentes" [outlined]="true" (click)="ActualizarDatosMeteorologicos(nombre_munic)"></p-button>
-
-  <br>
-  <br>
+  <!--<p-button label="Actualizar datos existentes" [outlined]="true" (click)="ActualizarDatosMeteorologicos(nombre_munic)"></p-button>-->
   <div>
     <b>Codigo municipio: {{id_municipioSelected}}</b>
   </div>
   <br>
-  <p-button label="Obtener datos DB" [outlined]="true" severity="success" (click)="ObtenerDatosMeteo(id_municipioSelected)"></p-button>
+  <p-button label="Obtener datos" [outlined]="true" severity="success" (click)="ObtenerDatosMeteo(nombre_munic)"></p-button>
 </p-card>
 
 <!--Visualización de datos meteorológicos-->
@@ -30,14 +27,14 @@
         <tr>
           <td>
             <i class="pi pi-arrow-up"></i>
-            max. {{this.datos_meteo_para_representar.temp_maximas[0].valor}} º
+            max. {{this.datos_meteo_para_representar.temp_maximas[0].valor}}º
           </td>
           <td>{{this.datos_meteo_para_representar.estados_Cielo[0].descripcion}}</td>
         </tr>
         <tr>
           <td>
             <i class="pi pi-arrow-down"></i>
-            min. {{this.datos_meteo_para_representar.temp_minimas[0].valor}} º
+            min. {{this.datos_meteo_para_representar.temp_minimas[0].valor}}º
           </td>
           <td>
             <i class="pi pi-cloud-download"></i>
@@ -53,14 +50,14 @@
         <tr>
           <td>
             <i class="pi pi-arrow-up"></i>
-            max. {{this.datos_meteo_para_representar.temp_maximas[1].valor}} º
+            max. {{this.datos_meteo_para_representar.temp_maximas[1].valor}}º
           </td>
           <td>{{this.datos_meteo_para_representar.estados_Cielo[1].descripcion}}</td>
         </tr>
         <tr>
           <td>
             <i class="pi pi-arrow-down"></i>
-            min. {{this.datos_meteo_para_representar.temp_minimas[1].valor}} º
+            min. {{this.datos_meteo_para_representar.temp_minimas[1].valor}}º
           </td>
           <td>
             <i class="pi pi-cloud-download"></i>
@@ -76,14 +73,14 @@
         <tr>
           <td>
             <i class="pi pi-arrow-up"></i>
-            max. {{this.datos_meteo_para_representar.temp_maximas[2].valor}} º
+            max. {{this.datos_meteo_para_representar.temp_maximas[2].valor}}º
           </td>
           <td>{{this.datos_meteo_para_representar.estados_Cielo[2].descripcion}}</td>
         </tr>
         <tr>
           <td>
             <i class="pi pi-arrow-down"></i>
-            min. {{this.datos_meteo_para_representar.temp_minimas[2].valor}} º
+            min. {{this.datos_meteo_para_representar.temp_minimas[2].valor}}º
           </td>
           <td>
             <i class="pi pi-cloud-download"></i>
