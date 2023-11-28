@@ -1,0 +1,61 @@
+.form-group {
+margin-bottom: 15px; /* Ajusta la separación entre grupos de campos */
+}
+  
+label {
+display: block;
+margin-bottom: 5px; /* Ajusta la separación entre etiqueta y campo */
+}
+
+body {
+  font-family: Arial, sans-serif;
+}
+
+.city-name {
+  text-align: center;
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+
+.card-container {
+  display: flex;
+  justify-content: space-around;
+  
+}
+
+.weather-card {
+  width: 30%;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.card-title {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.weather-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+.weather-table th,
+.weather-table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: center;
+}
+
+.card {
+  margin-top: 20px
+}
+
+.contenedor-flex {
+  display: flex;
+  justify-content: space-around; /* Puedes usar 'space-around' o 'space-evenly' según tus preferencias */
+  align-items: center; /* Para alinear verticalmente los elementos al centro */
+}

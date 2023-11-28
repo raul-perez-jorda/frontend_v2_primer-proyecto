@@ -1,0 +1,42 @@
+
+<div class="contenedor-flex">
+  <p-card header="Datos meteorológicos" class="login-card"
+  [style]="{width: '400px', margin:'50px auto'}">
+    <div class="form-group">
+      <b>Seleccionar municipio: </b>
+      <div class="card flex justify-content-center">
+        <p-autoComplete [(ngModel)]="nombre_municSelected" [dropdown]="true" [suggestions]="this.filteredMunicipios" (completeMethod)="filterMunicipio($event)" field=""></p-autoComplete>
+      </div>
+    </div>
+    <div>
+      <b>Codigo municipio: {{id_municipioSelected}}</b>
+    </div>
+    <br>
+    <p-button label="Obtener datos" [outlined]="true" severity="success" (click)="ObtenerDatosMeteo(nombre_municSelected)"></p-button>
+  </p-card>
+
+  <p-button icon="pi pi-phone" label="Top-Telefonos" severity="warning" (click)="goToTelefonos()"></p-button>
+</div>
+
+<!--Visualización de datos meteorológicos-->
+<div *ngIf="showDatosMeteo">
+  <div class="city-name">Tiempo en {{this.nombre_munic}}</div>
+
+  <div class="card-container">
+    <app-tabla-meteo-summary *ngFor="let i of indice_dias" 
+                           [datos_meteo_para_representar]="this.datos_meteo_para_representar"
+                           [indice_dia]="i">
+  </app-tabla-meteo-summary>
+  </div>
+
+  <div class="card flex justify-content-left">
+    <p-selectButton [options]="chartSelection" [(ngModel)]="this.chart_selected" optionLabel="label" optionValue="chart_selected"></p-selectButton>
+  </div>
+
+  <div class="card" *ngIf="this.chart_selected=='temperaturasHoy'">
+    <app-chart-dos-datos [data_chart]="this.data_chart_temperaturas_hoy"></app-chart-dos-datos>
+  </div>
+  <div class="card" *ngIf="this.chart_selected=='max-mins'">
+    <app-chart-dos-datos [data_chart]="this.data_chart_temperaturas_maxmin"></app-chart-dos-datos>
+  </div>
+</div>

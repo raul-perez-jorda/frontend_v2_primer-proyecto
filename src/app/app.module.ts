@@ -1,16 +1,16 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from "@angular/common/http";
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { ClienteModule } from './components/cliente/cliente.module';
-import { LoginModule } from './components/login/login.module';
-import { LogsComponent } from './components/logs/logs.component';
-import { MeteorologiaComponent } from './components/meteorologia/meteorologia.component';
+import { ClienteModule } from './pages/cliente/cliente.module';
+import { LoginModule } from './pages/login/login.module';
+import { LogsComponent } from './pages/logs/logs.component';
+import { MeteorologiaComponent } from './pages/meteorologia/meteorologia.component';
 
 import { CookieService } from "ngx-cookie-service";
 
@@ -23,19 +23,27 @@ import { TableModule } from 'primeng/table';
 import { DropdownModule } from 'primeng/dropdown';
 import { CardModule } from 'primeng/card';
 import { ChartModule } from 'primeng/chart';
+import { AutoCompleteModule } from 'primeng/autocomplete';
+import { TablaMeteoSummaryComponent } from './components/tabla-meteo-summary/tabla-meteo-summary.component';
+import { ChartDosDatosComponent } from './components/chart-dos-datos/chart-dos-datos.component';
+import { SelectButtonModule } from 'primeng/selectbutton';
+
 
 
 @NgModule({
   declarations: [
     AppComponent,
     LogsComponent,
-    MeteorologiaComponent
+    MeteorologiaComponent,
+    TablaMeteoSummaryComponent,
+    ChartDosDatosComponent,
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     ClienteModule,
     FormsModule,
+    ReactiveFormsModule,
     LoginModule,
     HttpClientModule,
     BrowserAnimationsModule,
@@ -46,7 +54,9 @@ import { ChartModule } from 'primeng/chart';
     TableModule,
     DropdownModule,
     CardModule,
-    ChartModule
+    ChartModule,
+    AutoCompleteModule,
+    SelectButtonModule
   ],
   providers: [
     CookieService,

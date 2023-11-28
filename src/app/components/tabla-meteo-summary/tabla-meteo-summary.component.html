@@ -1,0 +1,27 @@
+<div class="weather-card"
+      [style.background-image]="'url(' + getImagenCieloUrl('0') + ')'"
+      style="background-size: cover;">
+      <div class="image-container">
+        {{nombre_dia[indice_dia]}}
+        <img [src]="getImagenCieloUrl(this.datos_meteo_para_representar.estados_Cielo[indice_dia].valor_string||'0')" alt="Estado del cielo">
+      </div>
+      <table class="weather-table">
+        <tr>
+          <td>
+            <i class="pi pi-arrow-up" style="color: red"></i>
+            max. {{this.datos_meteo_para_representar.temp_maximas[indice_dia].valor_int}}º
+          </td>
+          <td>{{this.datos_meteo_para_representar.estados_Cielo[indice_dia].descripcion}}</td>
+        </tr>
+        <tr>
+          <td>
+            <i class="pi pi-arrow-down" style="color: blue"></i>
+            min. {{this.datos_meteo_para_representar.temp_minimas[indice_dia].valor_int}}º
+          </td>
+          <td>
+            <i class="pi pi-cloud-download" style="color: rgb(0, 89, 255)"></i>
+            {{this.datos_meteo_para_representar.probPrecipitacion[indice_dia].valor_int}} %
+          </td>
+        </tr>
+      </table>
+    </div>

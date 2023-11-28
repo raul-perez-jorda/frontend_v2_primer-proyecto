@@ -1,0 +1,25 @@
+.custom-form {
+  max-width: 310px; /* Establece el ancho máximo del formulario */
+  margin: 0 auto; /* Centra el formulario horizontalmente */
+  padding: 15px; /* Añade un relleno interno para darle grosor al formulario */
+}
+
+.form-group {
+  margin-bottom: 15px; /* Ajusta la separación entre grupos de campos */
+}
+
+label {
+  display: block;
+  margin-bottom: 5px; /* Ajusta la separación entre etiqueta y campo */
+}
+
+.error-message {
+  color: red;
+  margin-top: 5px;
+}
+
+.contenedor-flex {
+  display: flex;
+  justify-content: space-around; /* Puedes usar 'space-around' o 'space-evenly' según tus preferencias */
+  align-items: center; /* Para alinear verticalmente los elementos al centro */
+}
